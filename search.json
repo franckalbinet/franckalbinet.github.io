@@ -1,23 +1,23 @@
 [
   {
-    "objectID": "about.html",
-    "href": "about.html",
-    "title": "About",
-    "section": "",
-    "text": "My work combines a deep understanding of data science and AI with a commitment to innovation and impact, ensuring that cutting-edge technologies are effectively integrated into critical decision-making frameworks."
-  },
-  {
-    "objectID": "posts/2024-01-15-first-post.html",
-    "href": "posts/2024-01-15-first-post.html",
-    "title": "Large Soil Spectral Library",
-    "section": "",
-    "text": "Introduction\nThis is a …\n\nimport matplotlib.pyplot as plt\nimport numpy as np\n\nx = np.linspace(0, 10, 100)\ny = np.sin(x)\n\nplt.plot(x, y)\nplt.title('A Simple Sine Wave')\nplt.show()"
-  },
-  {
     "objectID": "index.html",
     "href": "index.html",
     "title": "Overthinking Out Loud",
     "section": "",
     "text": "Large Soil Spectral Library\n\n\n\n\n\n\nsoil-spectroscopy\n\n\nmachine-learning\n\n\n\nHow to leverage a large soil spectral library to improve soil classification\n\n\n\n\n\nJan 15, 2024\n\n\nFranck Albinet\n\n\n\n\n\n\nNo matching items"
+  },
+  {
+    "objectID": "about.html",
+    "href": "about.html",
+    "title": "About",
+    "section": "",
+    "text": "Hi, I’m Franck Albinet. For the past two decades, I’ve been consulting for the United Nations, working at the intersection of data science and AI, with a strong focus on spatial data analysis applied to emergency response and humanitarian aid.\nThis blog is my attempt to document thoughts and findings that might be useful to others. Expect a mix of technical deep dives, practical applications, and occasional musings about whatever technology caught my attention - from spatial data analysis, machine learningto soil spectroscopy and language models.\nWhy “Overthinking Out Loud”? Because sometimes the best way to learn is to document our over-engineering adventures and share them."
+  },
+  {
+    "objectID": "posts/ossl/2024-01-15-ossl.html",
+    "href": "posts/ossl/2024-01-15-ossl.html",
+    "title": "Large Soil Spectral Library",
+    "section": "",
+    "text": "Introduction\nComing soon…\n\nimport matplotlib.pyplot as plt\nimport numpy as np\n\nx = np.linspace(0, 10, 100)\ny = np.sin(x)\n\nplt.plot(x, y)\nplt.title('A Simple Sine Wave')\nplt.show()"
   }
 ]
