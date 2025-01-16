@@ -4,7 +4,7 @@
     "href": "about.html",
     "title": "About",
     "section": "",
-    "text": "Hi, I’m Franck Albinet. For the past two decades, I’ve been consulting for the United Nations, working at the intersection of data science and AI, with a strong focus on spatial data analysis applied to emergency response and humanitarian aid.\nThis blog is my attempt to document thoughts and findings that might be useful to others. Expect a mix of technical deep dives, practical applications, and occasional musings about whatever technology caught my attention - from spatial data analysis, machine learningto soil spectroscopy and language models.\nWhy “Overthinking Out Loud”? Because sometimes the best way to learn is to document our over-engineering adventures and share them."
+    "text": "Hi, I’m Franck Albinet. For the past two decades, I’ve been consulting for the United Nations, working at the intersection of data science and AI, with a strong focus on spatial data analysis applied to emergency response and humanitarian aid.\nThis blog is my attempt to document thoughts and findings that might be useful to others. Expect a mix of technical deep dives, practical applications, and occasional musings about whatever technology caught my attention - from spatial data analysis, machine learning to soil spectroscopy and language models.\nWhy “Overthinking Out Loud”? Because sometimes the best way to learn is to document our over-engineering adventures and share them."
   },
   {
     "objectID": "posts/2024-01-15-first-post.html",
@@ -25,6 +25,6 @@
     "href": "posts/ossl/2024-01-15-ossl.html",
     "title": "Large Soil Spectral Library",
     "section": "",
-    "text": "Introduction\nThis is a …\n\nimport matplotlib.pyplot as plt\nimport numpy as np\n\nx = np.linspace(0, 10, 100)\ny = np.sin(x)\n\nplt.plot(x, y)\nplt.title('A Simple Sine Wave')\nplt.show()"
+    "text": "Introduction\nComing soon…\n\nimport matplotlib.pyplot as plt\nimport numpy as np\n\nx = np.linspace(0, 10, 100)\ny = np.sin(x)\n\nplt.plot(x, y)\nplt.title('A Simple Sine Wave')\nplt.show()"
   }
 ]

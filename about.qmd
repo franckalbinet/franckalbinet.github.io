@@ -15,6 +15,6 @@ about:
 
 Hi, I'm Franck Albinet. For the past two decades, I've been consulting for the United Nations, working at the intersection of data science and AI, with a strong focus on spatial data analysis applied to emergency response and humanitarian aid.
 
-This blog is my attempt to document thoughts and findings that might be useful to others. Expect a mix of technical deep dives, practical applications, and occasional musings about whatever technology caught my attention - from spatial data analysis, machine learningto soil spectroscopy and language models.
+This blog is my attempt to document thoughts and findings that might be useful to others. Expect a mix of technical deep dives, practical applications, and occasional musings about whatever technology caught my attention - from spatial data analysis, machine learning to soil spectroscopy and language models.
 
 Why "Overthinking Out Loud"? Because sometimes the best way to learn is to document our over-engineering adventures and share them.
