@@ -1,0 +1,16 @@
+---
+title: "About"
+# image: profile.jpg
+about:
+  template: jolla
+  links:
+    - icon: linkedin
+      text: LinkedIn
+      href: https://www.linkedin.com/in/franckalbinet/
+    - icon: github
+      text: Github
+      href: https://github.com/franckalbinet
+
+---
+
+My work combines a deep understanding of data science and AI with a commitment to innovation and impact, ensuring that cutting-edge technologies are effectively integrated into critical decision-making frameworks.
