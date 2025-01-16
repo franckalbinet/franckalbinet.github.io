@@ -1,0 +1,23 @@
+[
+  {
+    "objectID": "about.html",
+    "href": "about.html",
+    "title": "About",
+    "section": "",
+    "text": "My work combines a deep understanding of data science and AI with a commitment to innovation and impact, ensuring that cutting-edge technologies are effectively integrated into critical decision-making frameworks."
+  },
+  {
+    "objectID": "posts/2024-01-15-first-post.html",
+    "href": "posts/2024-01-15-first-post.html",
+    "title": "Large Soil Spectral Library",
+    "section": "",
+    "text": "Introduction\nThis is a …\n\nimport matplotlib.pyplot as plt\nimport numpy as np\n\nx = np.linspace(0, 10, 100)\ny = np.sin(x)\n\nplt.plot(x, y)\nplt.title('A Simple Sine Wave')\nplt.show()"
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Overthinking Out Loud",
+    "section": "",
+    "text": "Large Soil Spectral Library\n\n\n\n\n\n\nsoil-spectroscopy\n\n\nmachine-learning\n\n\n\nHow to leverage a large soil spectral library to improve soil classification\n\n\n\n\n\nJan 15, 2024\n\n\nFranck Albinet\n\n\n\n\n\n\nNo matching items"
+  }
+]
