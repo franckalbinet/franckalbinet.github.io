@@ -1,0 +1,85 @@
+---
+title: "What Decision-Makers Need to Know About AI Training"
+description: "Cutting Through the Hype to Understand the Capabilities You're Actually Getting"
+author: "Franck Albinet"
+date: "2025-08-26"
+categories: [LLM Training]
+---
+
+You've probably heard that AI models cost millions to train, that they "learn" from data, and that the latest ones can "reason" through complex problems. Between breathless media coverage, marketing pitches from tech companies, and technical discussions filled with jargon and overloaded terminology, it's hard to know what's actually happening when we "train" an AI model.
+
+For decision-makers, this matters. When a startup claims their model was trained for "only $5 million" while tech giants spend billions, or when vendors talk about "advanced reasoning capabilities," what are they really describing? How do you move from a simple text-completion tool to something that can hold conversations and solve complex problems?
+
+This guide **synthesizes the key concepts from technical sources to give you a clear, honest picture** of the four stages that transform raw text into today's AI systems.
+
+## Stage 1: Self-Supervised Pre-Training - Building the Foundation
+
+At its core, a large language model starts as something surprisingly simple: a system that learns to predict what word comes next in a sentence. During pre-training, the model is fed massive amounts of text—books, websites, articles—with parts intentionally hidden. Its job is to fill in the blanks.
+
+Think of it like a massive pattern-recognition exercise. Given `"The cat sat on the ___,"` the model learns that `"mat"` appears more often than `"elephant"` in this context by seeing millions of similar examples.
+
+This isn't like traditional machine learning where humans label data as "correct" or "incorrect." The model teaches itself by finding patterns in existing text—hence "self-supervised."
+
+This stage requires enormous computational resources—hence those million-dollar training costs—because the model processes vast amounts of text to build its understanding of language patterns, facts, and relationships.
+
+**What you get:** A system that understands language structure and can complete text, but can't hold conversations or follow instructions. It's the foundation, not the finished product.
+
+## Stage 2: Supervised Fine-Tuning - Learning to Converse
+
+Having a system that can complete text isn't enough to create a useful assistant. If you asked a pre-trained model `"What are the key factors for successful program implementation?"` it might continue with `"This question often comes up in development circles. Many organizations struggle with..."` rather than actually providing actionable insights.
+
+Supervised fine-tuning teaches the model to behave like a helpful assistant. Instead of feeding it random internet text, trainers now show it thousands of carefully crafted conversations between users and AI assistants.
+
+The model learns the structure of helpful dialogue: how to recognize a question, provide a direct answer, maintain a professional tone, and structure information clearly. This isn't about adding new knowledge—the model already absorbed facts during pre-training. It's about learning how to package that knowledge into useful responses.
+
+**The limitation:** Creating these training conversations by hand is expensive and time-consuming. You can't possibly craft examples for every scenario your users might encounter.
+
+**What you get:** A system that can hold conversations and follow instructions, but it may still produce responses that seem helpful while being factually wrong or potentially harmful.
+
+## Stage 3: Preference Fine-Tuning - Learning What Humans Actually Want
+
+Even after learning to converse, models face two critical challenges. First, how do you train them on subjective tasks where there's no single "right" answer? Second, how do you ensure they refuse harmful requests?
+
+You can't easily write training examples for `"Write a compelling project proposal"` or `"Explain this policy in a way that stakeholders will understand."` What makes one response better than another is often a matter of judgment, not facts.
+
+Preference fine-tuning solves this by showing the model multiple responses to the same question and learning from human feedback about which ones are preferred. If users consistently prefer concise, well-structured responses over verbose ones, the model learns to adjust its style accordingly.
+
+This stage also handles safety and alignment. By showing the model examples of harmful requests and training it to recognize and refuse them, organizations can ensure their AI systems align with their values and policies.
+
+**What you get:** A system that produces responses more aligned with human preferences and can refuse inappropriate requests, but it may still struggle with complex reasoning tasks.
+
+## Stage 4: Reasoning Fine-Tuning - Teaching Models to Think Step-by-Step
+
+The previous stages create competent conversational assistants, but they often fail at complex problems requiring multi-step analysis. Ask a model to evaluate a budget proposal or design a project timeline, and it might jump to conclusions without showing its work.
+
+What the AI field calls "reasoning fine-tuning" teaches models to work through problems systematically—to break down complex tasks into steps, consider multiple approaches, and show their process. The term "reasoning" is borrowed from human cognition, though researchers who study how thinking actually works might raise an eyebrow at applying it to statistical text prediction. Like "artificial intelligence" itself, it's become the accepted terminology, so we'll go with the flow while keeping our skeptical hats nearby.
+
+This isn't just about being verbose; it's about mobilizing more computational power by working through problems step-by-step, much like humans do when tackling complex challenges.
+
+The breakthrough came from applying techniques originally developed for game-playing AI. Just as AlphaGo learned by playing millions of games against itself, these models improve by generating multiple solutions to problems and learning from which approaches work best.
+
+DeepSeek's innovation was making this process much more efficient. Instead of requiring expensive human evaluation of every response, they focused on problems with verifiable answers—like math or coding—where success can be measured automatically. This dramatically reduced training costs while achieving comparable performance.
+
+**What you get:** A system that can tackle complex, multi-step problems and show its analytical process, making it more reliable and trustworthy for critical decisions.
+
+## Beyond Reinforcement Learning - The Next Wave
+
+The field continues evolving rapidly. Recent research suggests that the reinforcement learning approach pioneered by DeepSeek might not be the final word on training reasoning capabilities.
+
+A July 2025 paper introduced [GEPA (reflective prompt evolution)](https://arxiv.org/abs/2507.19457), which challenges the established approach. Instead of learning from numerical rewards like a game score, GEPA uses natural language feedback—essentially teaching models to improve by reflecting on their mistakes in words rather than numbers.
+
+The results are striking: GEPA outperformed DeepSeek's methods by 10-20% while requiring up to 35 times fewer computational resources. The insight is elegantly simple—since these are language models, why not teach them using language itself?
+
+This represents a shift from viewing AI training as a game-playing problem to treating it as a more natural learning conversation. Models learn to critique their own work, identify weaknesses, and improve through self-reflection.
+
+**What this means:** Training costs could drop further while capabilities improve, making sophisticated AI more accessible to organizations with smaller budgets.
+
+## Conclusion
+
+Understanding these four stages—and their ongoing evolution—cuts through much of the confusion surrounding AI capabilities and costs. When a vendor claims their model has "advanced reasoning" or was trained "efficiently," you now have the framework to ask the right questions: Which stages did they use? How did they handle preference alignment? What innovations did they apply to reduce costs?
+
+The rapid evolution from DeepSeek's breakthrough to methods like GEPA shows this field is far from settled. What seemed like a massive competitive advantage just months ago may already be outdated by more efficient approaches.
+
+For decision-makers, the key insight is that AI capabilities aren't magic—they're the result of specific, understandable training processes. Each stage builds particular abilities while leaving others unaddressed. Understanding this progression helps you evaluate what you're actually getting when you invest in AI systems.
+
+**Acknowledgments:** This explanation draws heavily from the excellent analysis by [David Louapre in his video "Les 4 étapes pour entrainer un LLM"](https://www.youtube.com/watch?v=YcIbZGTRMjI&t=2142s) His clear breakdown of the technical concepts and concrete examples made this accessible translation possible.

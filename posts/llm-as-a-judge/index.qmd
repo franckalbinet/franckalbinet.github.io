@@ -1,0 +1,203 @@
+---
+title: "Why LLMs Can Actually Judge Other LLMs (And It's Not Cheating)"
+description: "The statistical foundation that makes LLM-as-Judge evaluation rigorous."
+author: "Franck Albinet"
+date: "2025-08-21"
+categories: [LLM Evals, Statistics]
+# image: "image.jpg"
+---
+
+
+> "Using an LLM to judge another LLM? That's like asking a student to grade their own exam!"
+
+This was the reaction I got when I first explained LLM-as-Judge evaluation to a friend. And honestly, it sounds ridiculous. How can we trust one AI system to fairly evaluate another? Isn't this just circular reasoning dressed up in fancy statistics?
+
+But here's the thing: **it actually works**. And not because of some hand-wavy "AI magic," but because of straightforward statistics that have been used for decades to handle imperfect evaluators. The same math that lets medical researchers use flawed diagnostic tests to estimate disease prevalence, or that helps pollsters correct for biased survey responses.
+
+The key insight? We're not asking the judge to improve itself - we're asking it to do something much simpler: classify outputs as good or bad. And as long as it's better than a coin flip at this task, we can mathematically correct for its mistakes.
+
+
+## The Foundation: What Are We Actually Judging?
+
+Before we dive into the math, let's be clear about what we're doing. We're not asking one LLM to give another LLM a report card. Instead, we're focusing on one specific failure mode that we've already identified through careful error analysis.
+
+Maybe your chatbot sometimes gives unhelpful responses. Or your code generator occasionally produces insecure code. Or your summarizer misses key details. Through systematic review of real outputs, you've spotted a pattern - a specific way your LLM fails.
+
+Now we want to measure: how often does this failure actually happen?
+
+This is where our judge comes in. We're asking it to do something much simpler than "evaluate quality" - we're asking it to classify each output as either:
+
+- **Pass**: This specific failure mode is absent
+- **Fail**: This specific failure mode is present
+
+Think of it like a medical diagnostic test. We're not asking the test to cure the disease - just to detect it.
+
+But to trust our "diagnostic test," we need rigorous data discipline...
+
+## The Foundation: Why Data Discipline Matters
+
+Before we dive into the math, we need to address the elephant in the room: how do we avoid the circular reasoning trap? The answer lies in rigorous data discipline - something most people skip when building LLM evaluators.
+
+Think of it like training any other classifier, except instead of adjusting model weights, we're crafting prompts. We need three distinct, non-overlapping datasets:
+
+- **Training set** (10-20%): Examples we might use in our judge's prompt as few-shot demonstrations
+- **Development set** (40-45%): Where we test different prompt versions and refine our approach
+- **Test set** (40-45%): Completely held-out data that gives us unbiased performance estimates
+
+The critical rule: never let examples leak between sets. If your judge sees test examples during development, your performance estimates become meaningless.
+
+This isn't just academic rigor - it's what separates reliable evaluation from wishful thinking.
+
+## The Math: Why Imperfect Judges Actually Work
+
+Let's start with what we're actually trying to figure out: **θ** (theta) - **the true success rate of our LLM system on new, unlabeled data**. This is the percentage of outputs that would genuinely pass if a perfect human evaluator reviewed all our new production data.
+
+But we don't have perfect human evaluators for thousands of new outputs. Instead, we have an imperfect LLM judge that makes two types of mistakes:
+
+- **True Positive Rate (TPR)**: When the output is genuinely good, what percentage does our judge correctly identify as "Pass"? We measure this on our test set by comparing judge predictions to human labels.
+
+- **True Negative Rate (TNR)**: When the output is genuinely bad, what percentage does our judge correctly identify as "Fail"? Again, measured on our test set.
+
+Now here's the key insight: we run our judge on new, unlabeled data and get an observed success rate. But this observed rate is biased due to our judge's errors. Using the [Rogan-Gladen correction formula from medical research (1978)](https://pubmed.ncbi.nlm.nih.gov/623091), we can estimate the true rate:
+
+`θ = (Observed Rate + TNR - 1) / (TPR + TNR - 1)` [1]
+
+## What This Formula Actually Does
+
+Think of it this way: our observed success rate includes systematic errors because our judge isn't perfect. From our test set, we measured exactly how imperfect it is:
+
+1. **We're missing some real successes** - our test set showed the judge only catches TPR% of true successes
+2. **We're counting some real failures as successes** - our test set showed the judge has a TNR% rate for correctly identifying failures, meaning it mislabels some failures as successes
+
+The Rogan-Gladen formula **accounts for these measured imperfections**. It asks: 
+
+> "Given that I know my judge catches TPR% of real successes and correctly identifies TNR% of real failures, what must the true rate have been to produce what I'm observing?"
+
+The beautiful part? This works as long as our judge is better than random chance - specifically, when **TPR + TNR > 1**. If TPR + TNR = 1 (whether that's a fair coin with TPR = TNR = 0.5, or a systematically biased judge with TPR = 0.8, TNR = 0.2), the denominator goes to zero and θ shoots to infinity. In both cases, the judge provides no useful signal about the true rate - it's just systematic bias without discriminative power.
+
+If you're getting extreme values, it's a signal that your judge's imperfections are too severe to correct reliably!
+
+*Note: In practice, we clip θ to stay between 0 and 1 (as any proper probability should)*.
+
+## Bootstrap: Quantifying Our Uncertainty
+
+Now we have a point estimate of **θ**, but how confident should we be in this number? This is where bootstrap comes to the rescue - one of the most revolutionary [statistical techniques of the computer age](https://hastie.su.domains/CASI), developed by legendary statistician [Bradley Efron](https://www.wikiwand.com/en/articles/Bradley_Efron) in 1979. Bootstrap democratized uncertainty quantification, allowing us to estimate confidence intervals without complex mathematical assumptions.
+
+Here's how it works in our context:
+
+Remember, our **TPR** and **TNR** estimates aren't perfect - they're based on our finite test set. If we had drawn a different test set, we might have gotten slightly different **TPR** and **TNR** values, leading to a different corrected estimate of **θ**.
+
+Bootstrap captures this uncertainty by repeatedly resampling **our test set**:
+1. **Resample** the test set many times (with replacement)
+2. **Recompute** **TPR'** and **TNR'** on each resample  
+3. **Apply** the correction formula using these new rates: **θ' = (same observed rate from new data + TNR' - 1)/(TPR' + TNR' - 1)**
+4. **Repeat** thousands of times to build a distribution of possible **θ** values
+
+The result? A **95% confidence interval** that tells us, roughly speaking: 
+
+> "We're 95% confident the true success rate lies between X% and Y%." 
+
+*(Technically, this means if we repeated our entire evaluation process many times, 95% of such intervals would contain the true rate - but the intuitive interpretation works fine for practical purposes.)*
+
+If this interval is narrow and above your quality threshold, great! If it's wide or straddles your threshold, you have a few options: 
+
+1. get a better judge (try a more recent or powerful LLM model to improve TPR and TNR)
+2. reconsider reformulating your failure mode - perhaps splitting it into simpler, more atomic criteria that are easier for the judge to catch reliably
+3. or collect more test data - larger test sets give more reliable TPR and TNR estimates, reducing bootstrap variance
+
+**Here's the key insight**: when TPR + TNR is close to 1, the denominator becomes very small, making 1/(TPR + TNR - 1) extremely large. This acts like a huge lever - tiny variations in our bootstrap estimates of TPR' and TNR' get amplified into massive swings in θ'. That's why judges barely better than chance produce wide, unreliable confidence intervals.
+
+
+## Mathematical Derivation (For the Curious)
+
+For those who want to see exactly where the Rogan-Gladen formula comes from, let's walk through the derivation step by step.
+
+**Setting up the notation:**
+
+- A = "Truth is Pass" (ground truth)
+- B = "Judge says Pass" (what we observe)
+- B<sup>c</sup> = "Judge says Fail" (the complement of B, meaning "not B")
+
+**What we know and what we want:**
+
+- We want: P(A) = θ (true success rate)
+- We observe: P(B) = observed success rate from our new data
+- We measured: P(B|A) = TPR and P(B<sup>c</sup>|A<sup>c</sup>) = TNR from our test set
+
+**The confusion matrix with joint probabilities:**
+First, let's show the joint probabilities P(A∩B) - meaning "Truth is Pass AND Judge says Pass" (the "∩" symbol means "intersection" or "both events happen"):
+
+|                 | **Judge: Pass**    | **Judge: Fail**                | **Total**        |
+| --------------- | ------------------ | ------------------------------ | ---------------- |
+| **Truth: Pass** | P(A∩B)             | P(A∩B<sup>c</sup>)             | P(A)             |
+| **Truth: Fail** | P(A<sup>c</sup>∩B) | P(A<sup>c</sup>∩B<sup>c</sup>) | P(A<sup>c</sup>) |
+| **Total**       | P(B)               | P(B<sup>c</sup>)               | 1                |
+
+
+**Expressing joint probabilities using conditional probabilities:**
+
+Now we can rewrite each cell using the definition of conditional probability. 
+Recall that **P(B&#124;A) = P(A∩B)/P(A), so P(A∩B) = P(A) × P(B&#124;A)**.
+
+
+|                 | **Judge: Pass**                            | **Judge: Fail**                                        | **Total**        |
+| --------------- | ------------------------------------------ | ------------------------------------------------------ | ---------------- |
+| **Truth: Pass** | P(A) × P(B&#124;A)                         | P(A) × P(B<sup>c</sup>&#124;A)                         | P(A)             |
+| **Truth: Fail** | P(A<sup>c</sup>) × P(B&#124;A<sup>c</sup>) | P(A<sup>c</sup>) × P(B<sup>c</sup>&#124;A<sup>c</sup>) | P(A<sup>c</sup>) |
+| **Total**       | P(B)                                       | P(B<sup>c</sup>)                                       | 1                |
+
+
+**Substituting our known quantities:**
+- P(A) = θ (what we want to find)
+- P(A<sup>c</sup>) = 1-θ  
+- P(B&#124;A) = TPR (measured from test set)
+- P(B<sup>c</sup>&#124;A<sup>c</sup>) = TNR (measured from test set)
+- P(B&#124;A<sup>c</sup>) = 1-TNR (since if truth is fail, judge either says pass or fail)
+
+
+**Substituting our measured quantities into the confusion matrix:**
+
+|                 | **Judge: Pass** | **Judge: Fail**  | **Total** |
+| --------------- | --------------- | ---------------- | --------- |
+| **Truth: Pass** | θ × TPR         | θ × (1-TPR)      | θ         |
+| **Truth: Fail** | (1-θ) × (1-TNR) | (1-θ) × TNR      | 1-θ       |
+| **Total**       | P(B)            | P(B<sup>c</sup>) | 1         |
+
+**Applying the law of total probability:**
+
+Looking at the "Judge: Pass" column, we can write:
+P(B) = θ × TPR + (1-θ) × (1-TNR)
+
+where P(B) is our **observed success rate** from running the judge on new, unlabeled data.
+
+**Solving for θ (algebraic manipulation):**
+
+- P(B) = θ × TPR + (1-θ) × (1-TNR)
+- P(B) = θ × TPR + (1-TNR) - θ × (1-TNR)
+- P(B) = θ × [TPR - (1-TNR)] + (1-TNR)
+- P(B) = θ × (TPR + TNR - 1) + (1-TNR)
+
+Rearranging to solve for θ:
+
+- P(B) - (1-TNR) = θ × (TPR + TNR - 1)
+- θ = [P(B) - (1-TNR)] / (TPR + TNR - 1)
+- θ = (P(B) + TNR - 1) / (TPR + TNR - 1)
+
+**And there's our Rogan-Gladen formula! Pure algebra from the law of total probability.**
+
+## Conclusion: Breaking the Circular Reasoning
+
+So why isn't this circular reasoning? Because we're not asking one LLM to improve another - we're asking it to do something much simpler: binary classification on a specific failure mode.
+
+The key insights that make this work:
+
+1. **Human validation anchors everything** - our test set provides the ground truth that breaks any circularity
+2. **We only need the judge to be better than random** - TPR + TNR > 1 is a surprisingly low bar
+3. **Mathematics handles the rest** - the Rogan-Gladen correction accounts for systematic errors we can measure
+4. **Bootstrap quantifies our uncertainty** - so we know when our estimates are reliable
+
+This isn't AI magic - it's decades-old statistical methodology applied to modern problems. The same math that helps medical researchers estimate disease prevalence from imperfect tests now helps us measure LLM performance at scale.
+
+The next time someone dismisses LLM-as-Judge as "circular reasoning," you can smile and show them the math. Sometimes the most powerful solutions are hiding in plain sight, waiting for the right statistical lens to bring them into focus.
+
+*Credits: This methodology is beautifully explained by Hamel Husain and Shreya Shankar in their [comprehensive course on LLM evaluation](https://maven.com/parlance-labs/evals) - highly recommended for anyone building production LLM systems.*

@@ -1,0 +1,32 @@
+{
+  "posts/post-with-code/index.qmd": {
+    "index.html": "eee4b444"
+  },
+  "posts/welcome/index.qmd": {
+    "index.html": "b7abe221"
+  },
+  "index.qmd": {
+    "index.html": "cd74302a"
+  },
+  "about.qmd": {
+    "about.html": "d709dd60"
+  },
+  "posts/llm-as-a-judge/index.qmd": {
+    "index.html": "275a32f6"
+  },
+  "posts/dss4nafa/index.qmd": {
+    "index.html": "d484e8cb"
+  },
+  "posts/llm-training-for-decision-makers/index.qmd": {
+    "index.html": "9d4613a7"
+  },
+  "posts/rag-maris-1/index.qmd": {
+    "index.html": "bef77094"
+  },
+  "posts/synthetic-questions-maris/index.qmd": {
+    "index.html": "7198b1a2"
+  },
+  "posts/mastering-ls-svm/index.qmd": {
+    "index.html": "733d7e74"
+  }
+}
