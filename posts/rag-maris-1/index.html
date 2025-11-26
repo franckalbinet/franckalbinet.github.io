@@ -1,0 +1,914 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.6.42">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Franck Albinet">
+<meta name="dcterms.date" content="2025-05-20">
+<meta name="description" content="Our journey implementing retrieval-augmented generation to make specialized scientific knowledge accessible to everyone">
+
+<title>Building a RAG System for IAEA’s Marine Radioactivity Database - Part 1 – FR.ANCKALBI.NET</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-2f5df379a58b258e96c21c0638c20c03.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap-d8da95f774daf845fa96da8c9b52f128.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+
+<link rel="stylesheet" href="../../styles.css">
+</head>
+
+<body class="nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top quarto-banner">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">FR.ANCKALBI.NET</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../index.html"> 
+<span class="menu-text">Blog</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../about.html"> 
+<span class="menu-text">About</span></a>
+  </li>  
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/franckalbinet"> <i class="bi bi-github" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://www.linkedin.com/in/franckalbinet"> <i class="bi bi-linkedin" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">Building a RAG System for IAEA’s Marine Radioactivity Database - Part 1</h1>
+                  <div>
+        <div class="description">
+          Our journey implementing retrieval-augmented generation to make specialized scientific knowledge accessible to everyone
+        </div>
+      </div>
+                          <div class="quarto-categories">
+                <div class="quarto-category">RAG</div>
+                <div class="quarto-category">Radioactivity</div>
+              </div>
+                  </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta">
+
+      <div>
+      <div class="quarto-title-meta-heading">Author</div>
+      <div class="quarto-title-meta-contents">
+               <p>Franck Albinet </p>
+            </div>
+    </div>
+      
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">May 20, 2025</p>
+      </div>
+    </div>
+    
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#what-is-maris" id="toc-what-is-maris" class="nav-link active" data-scroll-target="#what-is-maris">What is MARIS</a></li>
+  <li><a href="#the-unexpected-pdf-parsing-challenge" id="toc-the-unexpected-pdf-parsing-challenge" class="nav-link" data-scroll-target="#the-unexpected-pdf-parsing-challenge">The Unexpected PDF Parsing Challenge</a></li>
+  <li><a href="#chunking-strategy-and-evolution" id="toc-chunking-strategy-and-evolution" class="nav-link" data-scroll-target="#chunking-strategy-and-evolution">Chunking Strategy and Evolution</a></li>
+  <li><a href="#evaluating-retrieval-metrics-that-matter" id="toc-evaluating-retrieval-metrics-that-matter" class="nav-link" data-scroll-target="#evaluating-retrieval-metrics-that-matter">Evaluating Retrieval: Metrics That Matter</a>
+  <ul class="collapse">
+  <li><a href="#why-evaluate-the-retrieval-step" id="toc-why-evaluate-the-retrieval-step" class="nav-link" data-scroll-target="#why-evaluate-the-retrieval-step">Why Evaluate the Retrieval Step?</a></li>
+  <li><a href="#synthetic-question-generation" id="toc-synthetic-question-generation" class="nav-link" data-scroll-target="#synthetic-question-generation">Synthetic Question Generation</a></li>
+  <li><a href="#comprehensive-retrieval-metrics" id="toc-comprehensive-retrieval-metrics" class="nav-link" data-scroll-target="#comprehensive-retrieval-metrics">Comprehensive Retrieval Metrics</a></li>
+  <li><a href="#scientific-approach-to-system-design" id="toc-scientific-approach-to-system-design" class="nav-link" data-scroll-target="#scientific-approach-to-system-design">Scientific Approach to System Design</a></li>
+  <li><a href="#implementation-and-automation" id="toc-implementation-and-automation" class="nav-link" data-scroll-target="#implementation-and-automation">Implementation and Automation</a></li>
+  </ul></li>
+  <li><a href="#prompt-engineering-for-scientific-content" id="toc-prompt-engineering-for-scientific-content" class="nav-link" data-scroll-target="#prompt-engineering-for-scientific-content">Prompt Engineering for Scientific Content</a>
+  <ul class="collapse">
+  <li><a href="#balancing-relevance-with-accessibility" id="toc-balancing-relevance-with-accessibility" class="nav-link" data-scroll-target="#balancing-relevance-with-accessibility">Balancing Relevance with Accessibility</a></li>
+  <li><a href="#legal-and-ethical-considerations" id="toc-legal-and-ethical-considerations" class="nav-link" data-scroll-target="#legal-and-ethical-considerations">Legal and Ethical Considerations</a></li>
+  <li><a href="#scientific-accuracy-and-uncertainty" id="toc-scientific-accuracy-and-uncertainty" class="nav-link" data-scroll-target="#scientific-accuracy-and-uncertainty">Scientific Accuracy and Uncertainty</a></li>
+  <li><a href="#structured-response-format" id="toc-structured-response-format" class="nav-link" data-scroll-target="#structured-response-format">Structured Response Format</a></li>
+  <li><a href="#iterative-refinement" id="toc-iterative-refinement" class="nav-link" data-scroll-target="#iterative-refinement">Iterative Refinement</a></li>
+  <li><a href="#metadata-extraction-prompts" id="toc-metadata-extraction-prompts" class="nav-link" data-scroll-target="#metadata-extraction-prompts">Metadata Extraction Prompts</a></li>
+  </ul></li>
+  <li><a href="#early-results-and-lessons-learned" id="toc-early-results-and-lessons-learned" class="nav-link" data-scroll-target="#early-results-and-lessons-learned">Early Results and Lessons Learned</a>
+  <ul class="collapse">
+  <li><a href="#promising-initial-performance" id="toc-promising-initial-performance" class="nav-link" data-scroll-target="#promising-initial-performance">Promising Initial Performance</a></li>
+  <li><a href="#the-value-of-measurement-first-development" id="toc-the-value-of-measurement-first-development" class="nav-link" data-scroll-target="#the-value-of-measurement-first-development">The Value of Measurement-First Development</a></li>
+  <li><a href="#looking-ahead" id="toc-looking-ahead" class="nav-link" data-scroll-target="#looking-ahead">Looking Ahead</a></li>
+  </ul></li>
+  <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion">Conclusion</a></li>
+  <li><a href="#technology-stack" id="toc-technology-stack" class="nav-link" data-scroll-target="#technology-stack">Technology Stack</a></li>
+  <li><a href="#learning-resources" id="toc-learning-resources" class="nav-link" data-scroll-target="#learning-resources">Learning Resources</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content quarto-banner-title-block" id="quarto-document-content">
+
+
+
+
+
+<p>When most people think of the <a href="https://www.iaea.org">International Atomic Energy Agency (IAEA)</a>, they picture inspectors in protective gear examining nuclear facilities. Few realize that tucked away in Monaco, IAEA scientists are quietly building one of the world’s most comprehensive databases on marine radioactivity. The Marine Radioactivity Information System (MARIS) contains hundreds of academic papers tracking radioactivity in our oceans - vital information for environmental monitoring, research, and public safety.</p>
+<p>But how do you make such specialized knowledge accessible to both experts and the general public? Enter Retrieval-Augmented Generation (RAG) - the AI approach everyone’s talking about but few are implementing at scale. This post documents our ongoing journey to build a RAG system for MARIS, including the unexpected challenges, pragmatic solutions, and evaluation methods we’ve developed along the way.</p>
+<section id="what-is-maris" class="level2">
+<h2 class="anchored" data-anchor-id="what-is-maris">What is MARIS</h2>
+<p>Deep in the Mediterranean coastline of Monaco sits an IAEA laboratory that few people know about. Here, scientists manage what might be one of the most comprehensive databases of marine radioactivity in the world: the <a href="https://maris.iaea.org">Marine Radioactivity Information System (MARIS)</a>.</p>
+<p>MARIS serves as a global repository for measurements of radioactivity in our oceans. It contains data from thousands of samples collected across the world’s seas - everything from seawater and marine sediments to fish, seaweed, and other marine organisms. For over 20 years, the IAEA has been collecting, verifying, and standardizing this data, making it available to researchers, policymakers, and environmental scientists.</p>
+<p>Why does this matter? Radioactivity in our oceans comes from both natural sources and human activities - from nuclear power plant operations to historical weapons testing. Understanding these levels helps scientists track environmental changes, assess potential risks, and establish baselines for what’s “normal” in different marine environments.</p>
+<p>But MARIS isn’t just a database of numbers. Behind those measurements are more than 500 academic papers - detailed scientific studies explaining how the measurements were taken, what they mean, and how they fit into our broader understanding of marine ecosystems. This knowledge base is constantly growing as new research emerges.</p>
+<p>The challenge we faced was clear: How do we make this treasure trove of specialized scientific knowledge accessible to everyone who might need it? A government official with no scientific background might need to understand radioactivity trends in their coastal waters. A marine biologist might need detailed information about specific isotopes in certain species. A student might be researching environmental impacts of nuclear energy.</p>
+<p>Traditional search methods fall short with such specialized content. Keyword searches miss semantic connections. Manual browsing is impractical given the volume and complexity of the papers. And the technical nature of the content creates barriers for non-specialists.</p>
+<p>This is where our RAG implementation journey began - with the goal of transforming MARIS from a specialized database accessible mainly to experts into a knowledge system that could respond to natural language questions from users of all backgrounds, providing accurate, sourced information tailored to their level of expertise.</p>
+</section>
+<section id="the-unexpected-pdf-parsing-challenge" class="level2">
+<h2 class="anchored" data-anchor-id="the-unexpected-pdf-parsing-challenge">The Unexpected PDF Parsing Challenge</h2>
+<p>When we first outlined our RAG implementation roadmap, PDF parsing seemed like a mere checkbox item - a technical necessity but hardly a major challenge. After all, converting documents to text is a solved problem, right? As it turns out, this assumption couldn’t have been further from reality.</p>
+<p>Academic papers on marine radioactivity aren’t simple text documents. They’re complex publications with two-column layouts, tables packed with isotope measurements, specialized scientific figures, equations, footnotes, and references. What looks visually organized to the human eye becomes a parsing nightmare for machines.</p>
+<p>Our first attempts at using standard PDF extraction libraries produced text that resembled a jigsaw puzzle assembled by a blindfolded person. Sentences from adjacent columns merged mid-thought. Tables transformed into unintelligible character soup. Figure captions appeared randomly in the middle of paragraphs. And critical data - the very information we needed most - was often mangled beyond recognition.</p>
+<p>We quickly realized that poor-quality text extraction would poison our entire RAG pipeline. No matter how sophisticated our embedding model or how well-tuned our retrieval system, if the source text was garbled, our results would be unreliable.</p>
+<p>After evaluating several OCR solutions, <strong>Mistral OCR</strong> emerged as our champion, offering the best quality-to-cost ratio for scientific content. It proved remarkably capable at:</p>
+<ul>
+<li>Accurately recognizing scientific notation, including superscripts and subscripts</li>
+<li>Preserving the complex two-column layouts of academic papers</li>
+<li>Extracting figures as separate elements</li>
+<li>Converting tables into properly formatted markdown</li>
+<li>Rendering equations and isotope names in LaTeX format</li>
+</ul>
+<p>This significantly streamlined our parsing pipeline, but our work wasn’t done. We still needed to implement:</p>
+<ol type="1">
+<li><p><strong>Content Sanitization</strong>: We developed processes to remove irrelevant content like repetitive journal names, page numbers, phone numbers in footers, and other artifacts that would add noise to our retrieval system.</p></li>
+<li><p><strong>Figure and Table Processing</strong>: Rather than keeping raw tables and figures, we replaced them with rich descriptions generated by an LLM. For figures, we used a prompt like:</p></li>
+</ol>
+<pre><code>Please describe figure '{im_fname.name}' in the context of this academic paper.
+Extract its caption and provide a description detailed enough to be useful for a RAG system.
+When describing the figure, also consider its surrounding to further contextualize it.
+Analyse the image and syntesize the main findings as well as main trends if any.
+Always use latex to express nuclide names.
+If you notice that the figure is a logo from the journal, simply ignore it</code></pre>
+<p>This approach transformed visual data into textual descriptions that could be embedded and retrieved alongside the main text. For example, a graph showing cesium concentrations in different fish species would be described with all relevant trends and data points, ensuring this information remained accessible through text-based retrieval.</p>
+<ol start="3" type="1">
+<li><strong>Metadata Enrichment</strong>: During parsing, we extract key metadata like sample types, geographic locations, isotopes studied, and measurement methodologies - information that helps with later retrieval.</li>
+</ol>
+<p>The combination of Mistral OCR’s powerful baseline capabilities with our custom post-processing created a robust pipeline that transformed complex scientific PDFs into clean, structured text while preserving the scientific integrity of the original content.</p>
+<p>For anyone implementing RAG systems for scientific literature, our advice is clear: invest in quality OCR and don’t underestimate the importance of post-processing. The parsing stage isn’t just a technical prerequisite - it’s the foundation upon which your entire system rests.</p>
+</section>
+<section id="chunking-strategy-and-evolution" class="level2">
+<h2 class="anchored" data-anchor-id="chunking-strategy-and-evolution">Chunking Strategy and Evolution</h2>
+<p>With our parsing pipeline delivering high-quality text, we faced the next critical decision: how to divide our documents into chunks for embedding and retrieval. This seemingly simple decision has profound implications for retrieval quality.</p>
+<p>For our initial implementation, we opted for a straightforward approach: a sliding window of 800 tokens with 50% overlap. This means each chunk contains about 800 tokens (roughly 600 words), and consecutive chunks share half their content. We chose this conservative strategy to get our RAG pipeline operational quickly and begin collecting performance metrics.</p>
+<p>While simple, this approach offers several advantages: - It ensures concepts that might span chunk boundaries aren’t lost - It provides context continuity between chunks - It’s computationally efficient and easy to implement</p>
+<p>However, we’re well aware that more sophisticated chunking strategies exist:</p>
+<ul>
+<li><strong>Semantic chunking</strong>: Dividing text based on semantic units like paragraphs, sections, or topics rather than arbitrary token counts</li>
+<li><strong>Hierarchical chunking</strong>: Creating chunks at multiple levels of granularity (document, section, paragraph)</li>
+<li><strong>Recursive chunking</strong>: Breaking documents into progressively smaller pieces based on content structure</li>
+<li><strong>Late chunking</strong>: A particularly intriguing approach detailed in <a href="https://isaacflath.com/blog/blog_post?fpath=posts%2F2025-04-08-LateChunking.ipynb">Isaac Flath’s excellent blog post</a></li>
+</ul>
+<p>The late chunking strategy is especially compelling for our use case. Instead of pre-chunking documents before embedding, this approach embeds entire documents or large sections first. Then, at query time, it dynamically extracts the most relevant passages from these larger embedded units. This preserves more context and potentially improves retrieval accuracy, particularly for complex scientific content where concepts often span multiple paragraphs.</p>
+<p>As we move beyond our initial implementation, we plan to experiment with late chunking and evaluate whether it improves performance on our specific corpus of scientific papers. Our approach to chunking, like every aspect of our RAG system, will evolve based on empirical evidence from our evaluation metrics.</p>
+<p>For now, our simple sliding window approach gives us a solid baseline to measure future improvements against. And as we’ll see in the next section, having a robust evaluation framework is crucial for making informed decisions about these technical choices.</p>
+</section>
+<section id="evaluating-retrieval-metrics-that-matter" class="level2">
+<h2 class="anchored" data-anchor-id="evaluating-retrieval-metrics-that-matter">Evaluating Retrieval: Metrics That Matter</h2>
+<p>If there’s one lesson we’ve learned from implementing RAG systems, it’s this: <strong>you can’t improve what you don’t measure</strong>. While many RAG implementations focus exclusively on the final output quality, we recognized early that a systematic evaluation framework would be essential for iterative improvement.</p>
+<section id="why-evaluate-the-retrieval-step" class="level3">
+<h3 class="anchored" data-anchor-id="why-evaluate-the-retrieval-step">Why Evaluate the Retrieval Step?</h3>
+<p>The retrieval component is the linchpin of any RAG system. No matter how sophisticated your generation model, it can only work with the context it’s given. If the retrieval fails to surface relevant information, even the most advanced LLM will produce inadequate answers.</p>
+<p>This is especially critical for scientific content, where rigor matters and hallucinations can be particularly problematic. Our approach focuses on evaluating the retrieval component independently before assessing the full system.</p>
+</section>
+<section id="synthetic-question-generation" class="level3">
+<h3 class="anchored" data-anchor-id="synthetic-question-generation">Synthetic Question Generation</h3>
+<p>To evaluate retrieval effectively, we need a ground truth dataset of questions paired with the chunks that should be retrieved to answer them. But how do you create such a dataset without extensive manual annotation?</p>
+<p>Our solution: synthetic question generation. For each chunk in our corpus, we prompt an LLM to generate questions that:</p>
+<ol type="1">
+<li>Can be answered using only the information in that chunk</li>
+<li>Vary in complexity and phrasing</li>
+<li>Represent realistic user queries</li>
+<li>Include both factual and analytical questions</li>
+</ol>
+<p>We carefully engineered our question generation prompt to ensure diversity, avoiding simplistic questions that merely repeat keywords from the chunk. The goal is to create questions that test the semantic understanding capabilities of our embedding model, not just keyword matching.</p>
+<p>Each synthetic question is paired with its source chunk as the ground truth - the chunk that should ideally be retrieved when this question is asked. Authorized users can then review and refine generated questions as shown in <a href="#fig-1">Fig. 1</a>:</p>
+<!-- <figure id="fig-1">
+    <img src="synthetic-questions.png" alt="Synthetic question validation">
+    <figcaption>Fig. 1: Example of MARIS RAG UI to review and validate synthetic questions</figcaption>
+</figure> -->
+<div id="fig-1" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="synthetic-questions.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;1: Example of MARIS RAG UI to review and validate synthetic questions”
+</figcaption>
+</figure>
+</div>
+</section>
+<section id="comprehensive-retrieval-metrics" class="level3">
+<h3 class="anchored" data-anchor-id="comprehensive-retrieval-metrics">Comprehensive Retrieval Metrics</h3>
+<p>With our synthetic question-chunk pairs established, we implemented a robust evaluation framework using multiple complementary metrics:</p>
+<section id="recallk" class="level4">
+<h4 class="anchored" data-anchor-id="recallk">Recall@k</h4>
+<p>We calculate Recall@k across a wide range of k values (from 1 to 40). This measures the percentage of questions where the ground truth chunk appears within the top-k retrieved chunks. By examining this metric at different cutoff points, we can understand both the relevancy of our top results and the overall coverage of our retrieval system.</p>
+</section>
+<section id="mean-reciprocal-rank-mrr" class="level4">
+<h4 class="anchored" data-anchor-id="mean-reciprocal-rank-mrr">Mean Reciprocal Rank (MRR)</h4>
+<p>While Recall tells us if the relevant chunk appears somewhere in our results, MRR helps us understand where it typically appears. For each question, we identify the rank position of the ground truth chunk and calculate the reciprocal (1/rank). If the ground truth appears first, the score is 1; if second, 0.5; if third, 0.33, and so on. We then average these scores across all questions.</p>
+<p>MRR is particularly valuable for our use case because it quantifies the likelihood that relevant information will be prominently positioned in the context provided to the generation model. A higher MRR indicates that correct information is not just present but prioritized.</p>
+</section>
+</section>
+<section id="scientific-approach-to-system-design" class="level3">
+<h3 class="anchored" data-anchor-id="scientific-approach-to-system-design">Scientific Approach to System Design</h3>
+<p>We’ve approached our RAG implementation as a scientific experiment, systematically testing different configurations to identify optimal performance. Our evaluation framework allows us to compare:</p>
+<ul>
+<li>Different retrieval methods (vector search, full-text search, hybrid approaches)</li>
+<li>Various embedding models of different sizes and architectures</li>
+<li>The impact of rerankers on result quality</li>
+<li>Different chunking strategies and sizes</li>
+</ul>
+<p>Each combination is evaluated using our metrics suite, with results tracked in a dashboard that allows us to identify clear performance trends. This methodical approach ensures that every architectural decision is backed by empirical evidence rather than assumptions or industry trends.</p>
+<p>In future blog posts, we’ll dive deeper into specific findings from these experiments, including our detailed analysis of vector vs.&nbsp;hybrid search performance and the impact of rerankers on scientific content retrieval.</p>
+</section>
+<section id="implementation-and-automation" class="level3">
+<h3 class="anchored" data-anchor-id="implementation-and-automation">Implementation and Automation</h3>
+<p>We’ve integrated this evaluation framework directly into our development workflow:</p>
+<ol type="1">
+<li>A dedicated evaluation pipeline generates synthetic questions from a representative sample of chunks</li>
+<li>Questions are reviewed by domain experts to ensure quality and relevance</li>
+<li>Automated testing runs these questions through different retrieval configurations</li>
+<li>Results are tracked in a dashboard that shows performance trends over time</li>
+</ol>
+<p>By establishing this rigorous evaluation framework early in our implementation, we’ve been able to make continuous, measurable improvements to our system rather than relying on subjective assessments or anecdotal feedback.</p>
+</section>
+</section>
+<section id="prompt-engineering-for-scientific-content" class="level2">
+<h2 class="anchored" data-anchor-id="prompt-engineering-for-scientific-content">Prompt Engineering for Scientific Content</h2>
+<p>The final piece of our RAG implementation puzzle was crafting prompts that would effectively bridge the gap between technical scientific content and diverse user needs. Prompt engineering for scientific RAG systems differs significantly from general-purpose applications, particularly when working with specialized content like marine radioactivity research.</p>
+<section id="balancing-relevance-with-accessibility" class="level3">
+<h3 class="anchored" data-anchor-id="balancing-relevance-with-accessibility">Balancing Relevance with Accessibility</h3>
+<p>Our system needed to serve both domain experts and the general public, requiring prompts that could adapt to different levels of technical understanding. We developed a two-tier approach:</p>
+<ol type="1">
+<li><strong>Retrieval prompts</strong> optimized for semantic understanding of scientific concepts</li>
+<li><strong>Generation prompts</strong> designed to transform technical content into appropriate responses</li>
+</ol>
+<p>The generation component proved particularly challenging due to several unique requirements of scientific communication.</p>
+</section>
+<section id="legal-and-ethical-considerations" class="level3">
+<h3 class="anchored" data-anchor-id="legal-and-ethical-considerations">Legal and Ethical Considerations</h3>
+<p>Working with academic papers raised important copyright considerations. Our prompts needed to ensure the system would:</p>
+<ul>
+<li>Properly attribute information to original authors</li>
+<li>Avoid verbatim reproduction of substantial portions of papers</li>
+<li>Transform content in ways that add educational value</li>
+<li>Maintain scientific accuracy while paraphrasing</li>
+</ul>
+<p>Here’s an excerpt from our generation prompt that addresses these concerns:</p>
+<pre><code>RESPONSE REQUIREMENTS
+Attribution
+- Always cite the source of information in your responses
+- Include author names, publication year, title, and journal/publisher where available
+- Format: (Author et al., Year, "Title", Journal/Source)
+- When synthesizing from multiple sources, cite each source that contributed to your answer
+
+Content Transformation
+- Paraphrase and synthesize information rather than reproducing exact text
+- Limit direct quotations to short, necessary passages (maximum 2-3 sentences)
+- When quoting, use quotation marks and provide precise citation
+- Focus on communicating core concepts, findings, and facts rather than reproducing text</code></pre>
+<!-- <figure id="fig-2">
+    <img src="chat-answer-example.png" alt="Synthetic question validation">
+    <figcaption>Fig. 2: Example of a response to the following question: "What are the main anthropogenic radionuclides present in seafood?"</figcaption>
+</figure> -->
+<div id="fig-2" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="chat-answer-example.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;2: Example of a response to the following question: “What are the main anthropogenic radionuclides present in seafood?”
+</figcaption>
+</figure>
+</div>
+</section>
+<section id="scientific-accuracy-and-uncertainty" class="level3">
+<h3 class="anchored" data-anchor-id="scientific-accuracy-and-uncertainty">Scientific Accuracy and Uncertainty</h3>
+<p>Another critical aspect of our prompt engineering was maintaining scientific rigor. Our prompts instruct the model to:</p>
+<ul>
+<li>Distinguish between established scientific consensus and emerging findings</li>
+<li>Clearly communicate uncertainty when present</li>
+<li>Acknowledge limitations in the knowledge base</li>
+<li>Use proper scientific notation, particularly for isotopes and measurements</li>
+</ul>
+</section>
+<section id="structured-response-format" class="level3">
+<h3 class="anchored" data-anchor-id="structured-response-format">Structured Response Format</h3>
+<p>To enhance usability, we implemented a structured response format that helps users quickly find the information they need:</p>
+<pre><code>### Summary Answer: Brief, synthesized response to the query
+### Key Findings: Core information points relevant to the question
+### Scientific Context: How this information fits within broader understanding
+### Sources: Properly formatted citations for all information provided</code></pre>
+<p>This format ensures that users can immediately see a concise answer while having access to supporting details and proper citations if needed.</p>
+</section>
+<section id="iterative-refinement" class="level3">
+<h3 class="anchored" data-anchor-id="iterative-refinement">Iterative Refinement</h3>
+<p>Our prompt engineering process wasn’t a one-time effort but an iterative cycle:</p>
+<ol type="1">
+<li>We developed initial prompts based on our understanding of user needs and scientific communication standards</li>
+<li>We tested these prompts against a diverse set of queries</li>
+<li>Domain experts reviewed responses for accuracy, attribution, and appropriateness</li>
+<li>We refined prompts based on this feedback</li>
+<li>We repeated the cycle until performance met our standards</li>
+</ol>
+<p>This approach allowed us to identify and address subtle issues, such as the system occasionally using outdated terminology or struggling with certain types of scientific notation.</p>
+</section>
+<section id="metadata-extraction-prompts" class="level3">
+<h3 class="anchored" data-anchor-id="metadata-extraction-prompts">Metadata Extraction Prompts</h3>
+<p>Beyond response generation, we also developed specialized prompts for metadata extraction during the document processing phase. These prompts help identify key information like:</p>
+<ul>
+<li>Geographic locations of sampling</li>
+<li>Specific isotopes studied</li>
+<li>Measurement methodologies</li>
+<li>Marine organism species</li>
+<li>Temporal ranges of studies</li>
+</ul>
+<p>This extracted metadata enriches our chunks and improves retrieval accuracy for specific technical queries.</p>
+<p>The careful engineering of these various prompts has been essential to creating a system that not only retrieves relevant information but presents it in a way that is scientifically accurate, properly attributed, and accessible to different user groups.</p>
+</section>
+</section>
+<section id="early-results-and-lessons-learned" class="level2">
+<h2 class="anchored" data-anchor-id="early-results-and-lessons-learned">Early Results and Lessons Learned</h2>
+<p>After several months of development, our MARIS RAG system has reached an important milestone. We’ve successfully implemented a complete pipeline from PDF parsing to response generation, with a robust evaluation framework to guide our continued improvements.</p>
+<section id="promising-initial-performance" class="level3">
+<h3 class="anchored" data-anchor-id="promising-initial-performance">Promising Initial Performance</h3>
+<p>Even with our relatively straightforward initial approach, we’re seeing encouraging results:</p>
+<ul>
+<li><strong>70% Recall@10</strong> using hybrid search (combining vector and keyword search) with OpenAI’s text-embedding-3-small model and no reranker</li>
+<li><strong>Clean, properly attributed responses</strong> that maintain scientific accuracy while being accessible to different user groups</li>
+<li><strong>Successful handling of complex scientific queries</strong> about marine radioactivity data</li>
+</ul>
+<p>These results validate our approach and provide a solid foundation for further refinement. The fact that we’re achieving good retrieval performance even without advanced techniques like reranking suggests significant room for improvement as we implement more sophisticated components.</p>
+</section>
+<section id="the-value-of-measurement-first-development" class="level3">
+<h3 class="anchored" data-anchor-id="the-value-of-measurement-first-development">The Value of Measurement-First Development</h3>
+<p>Perhaps the most valuable outcome of this first phase has been establishing our evaluation framework. By prioritizing metrics before optimization, we’ve created a development environment where every decision can be guided by empirical evidence rather than intuition.</p>
+<p>This approach has already helped us avoid several potential pitfalls. For instance, when considering different chunking strategies, our metrics revealed that our simple sliding window approach was outperforming more complex semantic chunking in certain scenarios - a counterintuitive finding we would have missed without systematic measurement.</p>
+</section>
+<section id="looking-ahead" class="level3">
+<h3 class="anchored" data-anchor-id="looking-ahead">Looking Ahead</h3>
+<p>While this blog post has outlined our overall workflow and approach, we’ve only scratched the surface of the technical details. In upcoming posts, we’ll dive deeper into specific components and share our findings on:</p>
+<ol type="1">
+<li><p><strong>Scaling to the full MARIS knowledge base</strong> - We’ve focused initially on biota samples, but plan to expand to the complete corpus covering seawater, sediment, and suspended matter</p></li>
+<li><p><strong>Fine-tuning for scientific content</strong> - We’ll explore fine-tuning embedding models and rerankers specifically for marine radioactivity literature, again leveraging synthetic data generation</p></li>
+<li><p><strong>User segmentation and adaptation</strong> - Different user groups (scientists, policymakers, journalists, students) have distinct needs. We’ll share our approach to tailoring responses based on user expertise and intent</p></li>
+<li><p><strong>Error analysis and continuous improvement</strong> - We’ll establish processes for monitoring performance, identifying failure patterns, and implementing targeted improvements</p></li>
+</ol>
+</section>
+</section>
+<section id="conclusion" class="level2">
+<h2 class="anchored" data-anchor-id="conclusion">Conclusion</h2>
+<p>Building a RAG system for specialized scientific content presents unique challenges, from PDF parsing complexities to the need for rigorous scientific accuracy. Our journey with MARIS has reinforced that successful implementation requires both technical expertise and domain knowledge.</p>
+<p>By sharing our approach, challenges, and early results, we hope to contribute to the growing body of knowledge around practical RAG implementations. As we continue to refine our system, we’ll provide updates on our progress and insights that may help others tackling similar challenges.</p>
+<p>The potential impact of making specialized scientific knowledge more accessible extends far beyond our specific use case. As more organizations implement similar systems for their domain-specific knowledge bases, we may see a democratization of expertise that accelerates scientific progress and informed decision-making.</p>
+<p><em>Our application is now accessible at <a href="https://marise-dev.pla.sh">https://marise-dev.pla.sh</a> (currently by request only), where users can not only query the system but also provide feedback and annotations that help us continually improve performance.</em></p>
+</section>
+<section id="technology-stack" class="level2">
+<h2 class="anchored" data-anchor-id="technology-stack">Technology Stack</h2>
+<p>While we’ve focused primarily on methodology in this post, our implementation relies on several key technologies that have proven invaluable:</p>
+<ul>
+<li><a href="https://mistral.ai/fr/news/mistral-ocr">Mistral OCR</a> for high-quality scientific PDF parsing</li>
+<li><a href="https://ai.google.dev/gemini-api">Gemini-2-0-flash</a> for structured extraction and description of figures and tables</li>
+<li><a href="https://docs.lancedb.com/enterprise/introduction">LanceDB</a> as our vector database for efficient similarity search</li>
+<li><a href="https://www.fastht.ml">FastHTML</a> for creating and serving our web application</li>
+</ul>
+</section>
+<section id="learning-resources" class="level2">
+<h2 class="anchored" data-anchor-id="learning-resources">Learning Resources</h2>
+<p>For those interested in building similar systems, several resources have been particularly valuable in our journey:</p>
+<ul>
+<li><a href="https://isaacflath.com">Isaac Flath’s blog</a> for practical RAG implementation insights and FastHTML</li>
+<li>Jason Liu’s course on <a href="https://maven.com/applied-llms/rag-playbook">Systematically Improving RAG Applications</a> - while not inexpensive, it provided a structured approach that accelerated our development</li>
+<li><a href="https://www.philschmid.de/gemini-pdf-to-data">Phil Schmid’s guide on structured extraction with Gemini</a></li>
+<li><a href="https://solveit.fast.ai">J. Howard &amp; Answer.ai’s team “How to Solve It With Code” course</a></li>
+</ul>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp("https:\/\/fr\.anckalbi\.net");
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

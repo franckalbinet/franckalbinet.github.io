@@ -1,0 +1,45 @@
+/* css styles */
+
+.navbar-brand::before {
+    content: "F";
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    background-color: #2c3e50;
+    color: white;
+    border-radius: 50%;
+    text-align: center;
+    line-height: 30px;
+    font-weight: bold;
+    margin-right: 5px;
+}
+
+.navbar-brand {
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: #333;
+}
+
+h1 {
+    font-size: 1.6rem;
+}
+
+h2 {
+    font-size: 1.3rem;
+}
+
+h3.listing-title {
+    font-size: 1.2rem;
+}
+
+h3.listing-title a {
+    font-weight: bold;
+}
+
+.listing-description {
+    font-size: 0.9rem;
+}
+
+.category {
+    font-size: 0.9rem;
+}
