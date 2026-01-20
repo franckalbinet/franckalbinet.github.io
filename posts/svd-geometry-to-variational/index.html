@@ -1,0 +1,1269 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.6.42">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Franck Albinet">
+<meta name="dcterms.date" content="2026-01-20">
+<meta name="description" content="Understanding what matrices do to space, and how SVD emerges from finding maximally coupled directions">
+
+<title>SVD Through Variational Principles (Part 1): From Geometry to the Classical Formulation – FR.ANCKALBI.NET</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-2f5df379a58b258e96c21c0638c20c03.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap-d8da95f774daf845fa96da8c9b52f128.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="../../styles.css">
+</head>
+
+<body class="nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top quarto-banner">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">FR.ANCKALBI.NET</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../index.html"> 
+<span class="menu-text">Blog</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../about.html"> 
+<span class="menu-text">About</span></a>
+  </li>  
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/franckalbinet"> <i class="bi bi-github" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://www.linkedin.com/in/franckalbinet"> <i class="bi bi-linkedin" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">SVD Through Variational Principles (Part 1): From Geometry to the Classical Formulation</h1>
+                  <div>
+        <div class="description">
+          Understanding what matrices do to space, and how SVD emerges from finding maximally coupled directions
+        </div>
+      </div>
+                          <div class="quarto-categories">
+                <div class="quarto-category">Linear Algebra</div>
+                <div class="quarto-category">LLMs</div>
+                <div class="quarto-category">Kernel Methods</div>
+                <div class="quarto-category">Sustainable AI</div>
+              </div>
+                  </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta">
+
+      <div>
+      <div class="quarto-title-meta-heading">Author</div>
+      <div class="quarto-title-meta-contents">
+               <p>Franck Albinet </p>
+            </div>
+    </div>
+      
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">January 20, 2026</p>
+      </div>
+    </div>
+    
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#from-eigenvalues-to-svd" id="toc-from-eigenvalues-to-svd" class="nav-link active" data-scroll-target="#from-eigenvalues-to-svd">From Eigenvalues to SVD</a>
+  <ul class="collapse">
+  <li><a href="#eigenvalues-and-eigenvectors" id="toc-eigenvalues-and-eigenvectors" class="nav-link" data-scroll-target="#eigenvalues-and-eigenvectors">Eigenvalues and Eigenvectors</a>
+  <ul class="collapse">
+  <li><a href="#visualizing-the-transformation" id="toc-visualizing-the-transformation" class="nav-link" data-scroll-target="#visualizing-the-transformation">Visualizing the Transformation</a></li>
+  </ul></li>
+  <li><a href="#when-eigenvalues-fail" id="toc-when-eigenvalues-fail" class="nav-link" data-scroll-target="#when-eigenvalues-fail">When Eigenvalues Fail</a></li>
+  <li><a href="#the-four-subspaces-of-a-matrix" id="toc-the-four-subspaces-of-a-matrix" class="nav-link" data-scroll-target="#the-four-subspaces-of-a-matrix">The Four Subspaces of a Matrix</a>
+  <ul class="collapse">
+  <li><a href="#finding-the-four-subspaces" id="toc-finding-the-four-subspaces" class="nav-link" data-scroll-target="#finding-the-four-subspaces">Finding the Four Subspaces</a></li>
+  </ul></li>
+  <li><a href="#svd-finding-structure-in-both-spaces" id="toc-svd-finding-structure-in-both-spaces" class="nav-link" data-scroll-target="#svd-finding-structure-in-both-spaces">SVD: Finding structure in both spaces</a>
+  <ul class="collapse">
+  <li><a href="#the-geometry-of-svd" id="toc-the-geometry-of-svd" class="nav-link" data-scroll-target="#the-geometry-of-svd">The geometry of SVD</a></li>
+  <li><a href="#what-svd-reveals" id="toc-what-svd-reveals" class="nav-link" data-scroll-target="#what-svd-reveals">What SVD Reveals</a></li>
+  </ul></li>
+  </ul></li>
+  <li><a href="#the-variational-perspective" id="toc-the-variational-perspective" class="nav-link" data-scroll-target="#the-variational-perspective">The Variational Perspective</a>
+  <ul class="collapse">
+  <li><a href="#the-classical-variational-problem" id="toc-the-classical-variational-problem" class="nav-link" data-scroll-target="#the-classical-variational-problem">The Classical Variational Problem</a>
+  <ul class="collapse">
+  <li><a href="#reading-the-bilinear-form-geometrically" id="toc-reading-the-bilinear-form-geometrically" class="nav-link" data-scroll-target="#reading-the-bilinear-form-geometrically">Reading the bilinear form geometrically</a></li>
+  <li><a href="#why-constrain-the-norms" id="toc-why-constrain-the-norms" class="nav-link" data-scroll-target="#why-constrain-the-norms">Why Constrain the Norms?</a></li>
+  <li><a href="#making-it-concrete" id="toc-making-it-concrete" class="nav-link" data-scroll-target="#making-it-concrete">Making it concrete</a></li>
+  <li><a href="#why-multiple-solutions" id="toc-why-multiple-solutions" class="nav-link" data-scroll-target="#why-multiple-solutions">Why Multiple Solutions?</a></li>
+  <li><a href="#the-lagrangian-derivation" id="toc-the-lagrangian-derivation" class="nav-link" data-scroll-target="#the-lagrangian-derivation">The Lagrangian Derivation</a></li>
+  <li><a href="#the-shifted-eigenvalue-problem" id="toc-the-shifted-eigenvalue-problem" class="nav-link" data-scroll-target="#the-shifted-eigenvalue-problem">The Shifted Eigenvalue Problem</a></li>
+  <li><a href="#recovering-the-svd" id="toc-recovering-the-svd" class="nav-link" data-scroll-target="#recovering-the-svd">Recovering the SVD</a></li>
+  </ul></li>
+  <li><a href="#next-the-ls-svm-variational-reformulation" id="toc-next-the-ls-svm-variational-reformulation" class="nav-link" data-scroll-target="#next-the-ls-svm-variational-reformulation">Next: The LS-SVM Variational Reformulation</a></li>
+  </ul></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content quarto-banner-title-block" id="quarto-document-content">
+
+
+
+
+
+<p>As AI scales, so does its energy footprint. <a href="https://www.esat.kuleuven.be/sista/members/suykens.html">Johan Suykens</a>, creator of Least Squares Support Vector Machines (LS-SVM), has spent decades exploring how kernel methods can yield elegant, compact solutions. His 2016 paper <a href="https://www.sciencedirect.com/science/article/pii/S1063520315001360">“SVD revisited”</a> reformulates SVD through a variational principle that reveals deep structure. A structure that connects directly to attention mechanisms in transformers. The recent <a href="https://arxiv.org/abs/2305.19798">Primal-Attention</a> paper follows this thread, showing how kernel SVD enables equivalent performance with far more compact networks. This isn’t optimization for its own sake; it’s a path toward sustainable AI.</p>
+<p>These papers are technically demanding and assume significant background. My goal is to smooth the learning curve, to reveal the beauty and insight of this framework, and why it matters for the future of AI.</p>
+<p><strong>This is a three part series:</strong></p>
+<ol type="1">
+<li><strong>Part 1 (this post)</strong>: Rebuild SVD from geometry to its classical variational formulation</li>
+<li><strong>Part 2</strong>: Suykens’ LS-SVM reformulation and kernel SVD (covering “SVD revisited”)</li>
+<li><strong>Part 3</strong>: From kernel SVD to attention mechanisms (covering “Primal-Attention”)</li>
+</ol>
+<p>We start by asking: <strong>what does a matrix do to space</strong>? Most ML engineers know SVD as <code>u, s, v = torch.linalg.svd(A)</code>, but the geometric intuition fades. For square matrices, eigenvalues answer this. For rectangular matrices, they can’t. So we exhibit the four fundamental subspaces, revealing that <strong>singular vectors are maximally coupled</strong> through the matrix. We then show how the classical variational formulation, a different perspective, arrives at the same solution.</p>
+<p><strong>Our audience</strong>: ML/AI practitioners who want geometric intuition alongside rigor. Proofs where they illuminate, code where it grounds abstraction.</p>
+<section id="from-eigenvalues-to-svd" class="level1">
+<h1>From Eigenvalues to SVD</h1>
+<p><strong>What does a matrix actually do?</strong> This question drives everything that follows. In machine learning, matrices aren’t abstract objects, they encode data (<code>m</code> samples as rows, <code>n</code> features as columns) or transformations we want to understand. When we ask “what does this matrix do?”, we’re asking: how does it stretch, rotate, or compress what we put through it? Can we summarize that action simply?</p>
+<p>For square matrices, eigenvalues and eigenvectors answer this beautifully. But most data matrices aren’t square. The question remains valid; the tool fails. SVD emerges as the natural replacement: instead of one set of special directions, we get two: one for the input space, one for the output, linked through singular values. This “find the essence” theme will reappear when we reformulate SVD variationally.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Linear Algebra Prerequisites
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-1" class="callout-1-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>This post assumes familiarity with eigenvalues, eigenvectors, and matrix factorizations. If you need a refresher:</p>
+<ul>
+<li><p><strong>For intuition</strong>: Grant Sanderson’s <a href="https://www.youtube.com/watch?v=fNk_zzaMoSs&amp;list=PLZHQObOWTQDPD3MizzM2xVFitgF8hE_ab">Essence of Linear Algebra</a> builds geometric understanding from first principles</p></li>
+<li><p><strong>For depth</strong>: Gilbert Strang’s <a href="https://www.youtube.com/watch?v=QVKj3LADCnA&amp;list=PL49CF3715CB9EF31D">MIT 18.06 Linear Algebra</a> remains the gold standard for rigorous yet accessible treatment</p></li>
+</ul>
+</div>
+</div>
+</div>
+<section id="eigenvalues-and-eigenvectors" class="level2">
+<h2 class="anchored" data-anchor-id="eigenvalues-and-eigenvectors">Eigenvalues and Eigenvectors</h2>
+<p>For a square matrix, eigenvalues and eigenvectors capture its essence. An eigenvector <span class="math inline">\(v\)</span> satisfies <span class="math inline">\(Av = \lambda v\)</span>: the matrix acts on it by pure scaling. The eigenvalue <span class="math inline">\(\lambda\)</span> tells the story:</p>
+<ul>
+<li><span class="math inline">\(\lambda &gt; 0\)</span>: stretch along <span class="math inline">\(v\)</span></li>
+<li><span class="math inline">\(\lambda &lt; 0\)</span>: stretch and flip</li>
+<li><span class="math inline">\(|\lambda| &gt; 1\)</span>: expansion; <span class="math inline">\(|\lambda| &lt; 1\)</span>: contraction</li>
+<li><span class="math inline">\(\lambda = 0\)</span>: collapse to zero</li>
+<li>Complex <span class="math inline">\(\lambda\)</span>: rotation and scaling combined</li>
+</ul>
+<p>A matrix can look complicated, but its eigenvalues summarize what it fundamentally does to space.</p>
+<section id="visualizing-the-transformation" class="level3">
+<h3 class="anchored" data-anchor-id="visualizing-the-transformation">Visualizing the Transformation</h3>
+<p>Let’s see this in action with a concrete example:</p>
+<p><span class="math display">\[A = \begin{bmatrix} 3 &amp; 1 \\ 2 &amp; 2 \end{bmatrix}\]</span></p>
+<p>What does this matrix actually do? Each column of <span class="math inline">\(A\)</span> tells us where a standard basis vector lands: <span class="math inline">\(e_1 = [1,0]\)</span> maps to <span class="math inline">\(Ae_1 = [3,2]\)</span>, and <span class="math inline">\(e_2 = [0,1]\)</span> maps to <span class="math inline">\(Ae_2 = [1,2]\)</span>. But this doesn’t reveal the structure.</p>
+<p>To see the essence, pass a unit circle through <span class="math inline">\(A\)</span>. Every point on the circle is a unit vector; its image shows how <span class="math inline">\(A\)</span> stretches and rotates space. The circle becomes an ellipse. The eigenvectors point in directions where <span class="math inline">\(A\)</span> acts by pure scaling, with no rotation. Along <span class="math inline">\(v_1\)</span>, space stretches by <span class="math inline">\(\lambda_1 = 4\)</span>. Along <span class="math inline">\(v_2\)</span>, it stretches by <span class="math inline">\(\lambda_2 = 1\)</span>.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Are Eigenvectors perpendicular?
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-2" class="callout-2-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>For general square matrices, eigenvectors aren’t necessarily perpendicular. The exception: symmetric matrices, whose eigenvectors are always orthogonal. <strong>Covariance matrices, which appear constantly in ML, are symmetric</strong> with non-negative eigenvalues making them positive semidefinite (positive definite when full rank).</p>
+</div>
+</div>
+</div>
+<p>Computing eigenvalues by hand means solving <span class="math inline">\(\det(A - \lambda I) = 0\)</span>, which gets tedious fast. In practice, we let NumPy handle it:</p>
+<div id="2ce8220f" class="cell" data-time_run="2026-01-20T14:53:17.822622+00:00" data-execution_count="45">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>A <span class="op">=</span> np.array([[<span class="dv">3</span>, <span class="dv">1</span>], </span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>              [<span class="dv">2</span>, <span class="dv">2</span>]])  <span class="co"># Non-symmetric: eigenvectors won't be orthogonal</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>eigenvalues, eigenvectors <span class="op">=</span> np.linalg.eig(A)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Eigenvalues: </span><span class="sc">{</span>eigenvalues<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Eigenvectors:</span><span class="ch">\n</span><span class="sc">{</span>eigenvectors<span class="sc">}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Eigenvalues: [4. 1.]
+Eigenvectors:
+[[ 0.70710678 -0.4472136 ]
+ [ 0.70710678  0.89442719]]</code></pre>
+</div>
+</div>
+<div id="cell-eigen-decomposition" class="cell" data-hide_input="true" data-time_run="2026-01-20T14:53:17.854137+00:00">
+<div class="cell-output cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="index_files/figure-html/eigen-decomposition-output-1.png" id="eigen-decomposition" class="img-fluid quarto-figure quarto-figure-center anchored figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>This eigenvalue story is elegant for square matrices. But recall our opening question: most data matrices are rectangular: <code>m</code> samples as rows, <code>n</code> features as columns. When we ask “what does this matrix do?” for real data, we need an answer that works beyond the square case.</p>
+</section>
+</section>
+<section id="when-eigenvalues-fail" class="level2">
+<h2 class="anchored" data-anchor-id="when-eigenvalues-fail">When Eigenvalues Fail</h2>
+<p>Now consider a 2×3 matrix (perhaps two measurements across three sensors, or two data points with three features):</p>
+<p><span class="math display">\[A = \begin{bmatrix} 1 &amp; 2 &amp; 0 \\ 0 &amp; 1 &amp; 2 \end{bmatrix}\]</span></p>
+<p>Can we compute eigenvalues? The eigenvalue equation <span class="math inline">\(Av = \lambda v\)</span> requires that <span class="math inline">\(v\)</span> and <span class="math inline">\(Av\)</span> live in the same space: we subtract them to get <span class="math inline">\((A - \lambda I)v = 0\)</span>. But here <span class="math inline">\(v \in \mathbb{R}^3\)</span> and <span class="math inline">\(Av \in \mathbb{R}^2\)</span>. The dimensions don’t match. There is no identity matrix <span class="math inline">\(I\)</span> that makes <span class="math inline">\(A - \lambda I\)</span> meaningful.</p>
+<p>Eigenvalues are fundamentally about a matrix acting on a space and returning to that same-dimensional space. Rectangular matrices map between spaces of different dimensions. We need a different tool.</p>
+</section>
+<section id="the-four-subspaces-of-a-matrix" class="level2">
+<h2 class="anchored" data-anchor-id="the-four-subspaces-of-a-matrix">The Four Subspaces of a Matrix</h2>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="true" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Quick dimension check
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-3" class="callout-3-contents callout-collapse collapse show">
+<div class="callout-body-container callout-body">
+<p>For a <span class="math inline">\(2 \times 3\)</span> matrix <span class="math inline">\(A\)</span>, the input vector <span class="math inline">\(x\)</span> must be in <span class="math inline">\(\mathbb{R}^3\)</span> and the output <span class="math inline">\(Ax\)</span> lands in <span class="math inline">\(\mathbb{R}^2\)</span>:</p>
+<p><span class="math display">\[\underbrace{A}_{2 \times 3} \cdot \underbrace{x}_{3 \times 1} = \underbrace{Ax}_{2 \times 1}\]</span></p>
+<pre><code>    A         x       Ax
+ ┌─────┐    ┌─┐     ┌─┐
+ │     │    │ │     │ │
+ │ 2×3 │  × │3│  =  │2│
+ │     │    │ │     │ │
+ └─────┘    └─┘     └─┘
+   ↑          ↑       ↑
+ (rows×cols) (R³)    (R²)</code></pre>
+<p>The “inner” dimensions must match (3 = 3), and the “outer” dimensions give the result shape.</p>
+</div>
+</div>
+</div>
+<p>Consider again our 2×3 matrix <span class="math inline">\(A\)</span>. It takes 3D vectors as input and produces 2D vectors as output. We’re squashing 3D down to 2D. Something must get lost.</p>
+<p><strong>Where do the inputs live?</strong></p>
+<p>Look at the rows of <span class="math inline">\(A\)</span>: they are two vectors in <span class="math inline">\(\mathbb{R}^3\)</span>: - Row 1: <span class="math inline">\((1, 2, 0)\)</span> - Row 2: <span class="math inline">\((0, 1, 2)\)</span></p>
+<p>These two vectors span a plane in 3D. This plane is the <strong>row space</strong> as shown in <a href="#fig-decomposition" class="quarto-xref">Figure&nbsp;1</a></p>
+<p>Now imagine feeding a 3D vector <span class="math inline">\(x\)</span> into <span class="math inline">\(A\)</span>. Three things can happen:</p>
+<ol type="1">
+<li><strong><span class="math inline">\(x\)</span> lies in the row space plane</strong>: it maps to something nonzero in <span class="math inline">\(\mathbb{R}^2\)</span></li>
+<li><strong><span class="math inline">\(x\)</span> is perpendicular to that plane</strong>: it gets killed, <span class="math inline">\(Ax = 0\)</span></li>
+<li><strong><span class="math inline">\(x\)</span> is tilted away from the plane</strong>: it splits into two parts. The part in the plane survives; the part perpendicular to it vanishes (the situation we are portraying in <a href="#fig-decomposition" class="quarto-xref">Figure&nbsp;1</a>)</li>
+</ol>
+<p>The perpendicular direction (and anything along it) is the <strong>null space</strong>.</p>
+<p><strong>The decomposition</strong></p>
+<p>As shown in <a href="#fig-decomposition" class="quarto-xref">Figure&nbsp;1</a>, any input vector <span class="math inline">\(x \in \mathbb{R}^3\)</span> splits uniquely into two orthogonal pieces:</p>
+<p><span class="math display">\[x = x_{\text{row}} + x_{\text{null}}\]</span></p>
+<p>When <span class="math inline">\(A\)</span> acts:</p>
+<ul>
+<li><span class="math inline">\(Ax_{\text{row}}\)</span> → lands in the column space (nonzero)</li>
+<li><span class="math inline">\(Ax_{\text{null}}\)</span> → vanishes to zero</li>
+</ul>
+<p>So <span class="math inline">\(Ax = Ax_{\text{row}}\)</span>. The null space component is silently erased. Only the row space projection determines the output. This is why information is “lost” when we squash dimensions; vectors that differ only in their null space component become indistinguishable after multiplication.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-4-contents" aria-controls="callout-4" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Rank of a matrix
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-4" class="callout-4-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>The dimension of the row space is called the <strong>rank</strong> of the matrix (here, rank 2). A fundamental theorem: row space and column space always share the same dimension. And notice: rank + dim(null space) = 3 (the input dimension). Our 2×3 matrix has rank 2, so the null space is 1 dimensional (exactly one direction gets erased).</p>
+</div>
+</div>
+</div>
+<div id="cell-fig-decomposition" class="cell" data-hide_input="true" data-time_run="2026-01-20T14:53:18.000487+00:00" data-execution_count="47">
+<div class="cell-output cell-output-display">
+<div id="fig-decomposition" class="quarto-float quarto-figure quarto-figure-center anchored" data-fig-align="center">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-decomposition-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="index_files/figure-html/fig-decomposition-output-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-decomposition-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;1: Input space decomposition
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p><strong>The output side</strong></p>
+<p>We’ve seen two of the four subspaces: the row space (directions that survive) and the null space (directions that get killed). Both live in the input space <span class="math inline">\(\mathbb{R}^n\)</span>.</p>
+<p>Now for the other two. Think of <span class="math inline">\(A\)</span> as a linear map from <span class="math inline">\(\mathbb{R}^n\)</span> to <span class="math inline">\(\mathbb{R}^m\)</span>. Its transpose <span class="math inline">\(A^T\)</span> goes the other way: from <span class="math inline">\(\mathbb{R}^m\)</span> back to <span class="math inline">\(\mathbb{R}^n\)</span>. The remaining two subspaces come from asking the same questions about <span class="math inline">\(A^T\)</span> that we asked about <span class="math inline">\(A\)</span>:</p>
+<ul>
+<li><strong>Column space</strong>: where <span class="math inline">\(A\)</span> can actually send vectors (the “row space” of <span class="math inline">\(A^T\)</span>)</li>
+<li><strong>Left null space</strong>: directions in the output that <span class="math inline">\(A\)</span> can never reach (the “null space” of <span class="math inline">\(A^T\)</span>)</li>
+</ul>
+<p>For our 2×3 matrix, the column space fills all of <span class="math inline">\(\mathbb{R}^2\)</span>, every output point is reachable. So there’s no left null space.</p>
+<p>But imagine we had a 3×2 matrix instead (expanding 2D → 3D). Now the roles flip: - Every input direction is used (no null space) - The matrix maps all of <span class="math inline">\(\mathbb{R}^2\)</span> to a plane in <span class="math inline">\(\mathbb{R}^3\)</span> (still rank 2), but not every vector in <span class="math inline">\(\mathbb{R}^3\)</span> is reachable, the direction perpendicular to this plane is the left null space</p>
+<p>The symmetry: what the null space is to <span class="math inline">\(A\)</span>, the left null space is to <span class="math inline">\(A^T\)</span>.</p>
+<p><strong>The Four Fundamental Subspaces: A Summary</strong></p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Space</th>
+<th>Lives in</th>
+<th>What it represents</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Row space</td>
+<td>Input <span class="math inline">\(\mathbb{R}^n\)</span></td>
+<td>Directions that produce output</td>
+</tr>
+<tr class="even">
+<td>Null space</td>
+<td>Input <span class="math inline">\(\mathbb{R}^n\)</span></td>
+<td>Directions that get killed</td>
+</tr>
+<tr class="odd">
+<td>Column space</td>
+<td>Output <span class="math inline">\(\mathbb{R}^m\)</span></td>
+<td>Where outputs land</td>
+</tr>
+<tr class="even">
+<td>Left null space</td>
+<td>Output <span class="math inline">\(\mathbb{R}^m\)</span></td>
+<td>Directions never reached</td>
+</tr>
+</tbody>
+</table>
+<p>The matrix creates a perfect one-to-one map between row space and column space. The null spaces are the “leftovers”, killed on input, unreachable on output.</p>
+<section id="finding-the-four-subspaces" class="level3">
+<h3 class="anchored" data-anchor-id="finding-the-four-subspaces">Finding the Four Subspaces</h3>
+<p>We’ve seen the geometry: four subspaces, with <span class="math inline">\(A\)</span> creating a perfect map between row space and column space. But how do we actually <em>find</em> orthonormal bases for these subspaces?</p>
+<p>The trick: form two square, symmetric matrices: - <span class="math inline">\(A^TA\)</span> (lives in input space <span class="math inline">\(\mathbb{R}^n\)</span>) captures how columns correlate - <span class="math inline">\(AA^T\)</span> (lives in output space <span class="math inline">\(\mathbb{R}^m\)</span>) captures how rows correlate</p>
+<p>For our matrix <span class="math inline">\(A\)</span>, these are:</p>
+<p><span class="math display">\[A^TA = \begin{bmatrix} 1 &amp; 2 &amp; 0 \\ 2 &amp; 5 &amp; 2 \\ 0 &amp; 2 &amp; 4 \end{bmatrix}, \quad AA^T = \begin{bmatrix} 5 &amp; 2 \\ 2 &amp; 5 \end{bmatrix}\]</span></p>
+<p>Both are symmetric, so they have orthogonal eigenvectors. And the beautiful fact: these eigenvectors partition exactly into our four subspaces.</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 11%">
+<col style="width: 44%">
+<col style="width: 44%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Matrix</th>
+<th>Eigenvectors with <span class="math inline">\(\lambda &gt; 0\)</span></th>
+<th>Eigenvectors with <span class="math inline">\(\lambda = 0\)</span></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><span class="math inline">\(A^TA\)</span></td>
+<td>Row space</td>
+<td>Null space</td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(AA^T\)</span></td>
+<td>Column space</td>
+<td>Left null space</td>
+</tr>
+</tbody>
+</table>
+<p>Let’s verify this connection numerically. We’ll compute the eigendecompositions of <span class="math inline">\(A^TA\)</span> and <span class="math inline">\(AA^T\)</span>, then compare their eigenvectors with what SVD produces directly:</p>
+<div id="c390424e" class="cell" data-time_run="2026-01-20T14:53:18.170143+00:00" data-execution_count="48">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Eigendecompositions</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>eig_vals_ATA, eig_vecs_ATA <span class="op">=</span> np.linalg.eig(A.T <span class="op">@</span> A)</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>eig_vals_AAT, eig_vecs_AAT <span class="op">=</span> np.linalg.eig(A <span class="op">@</span> A.T)</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Sort by eigenvalues (descending) to match SVD ordering</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>idx_ATA <span class="op">=</span> np.argsort(eig_vals_ATA)[::<span class="op">-</span><span class="dv">1</span>]</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>idx_AAT <span class="op">=</span> np.argsort(eig_vals_AAT)[::<span class="op">-</span><span class="dv">1</span>]</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>V_from_eig <span class="op">=</span> eig_vecs_ATA[:, idx_ATA]</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>U_from_eig <span class="op">=</span> eig_vecs_AAT[:, idx_AAT]</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>sigma_sq <span class="op">=</span> np.sort(eig_vals_ATA)[::<span class="op">-</span><span class="dv">1</span>][:<span class="dv">2</span>]  <span class="co"># nonzero eigenvalues</span></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Compare with SVD</span></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>U, sigma, Vt <span class="op">=</span> np.linalg.svd(A)</span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Eigenvalues (σ²):"</span>, sigma_sq)</span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Singular values squared:"</span>, sigma<span class="op">**</span><span class="dv">2</span>)</span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"</span><span class="ch">\n</span><span class="st">U matches (up to sign)?"</span>, np.allclose(np.<span class="bu">abs</span>(U_from_eig), np.<span class="bu">abs</span>(U)))</span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"V matches (up to sign)?"</span>, np.allclose(np.<span class="bu">abs</span>(V_from_eig), np.<span class="bu">abs</span>(Vt.T)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Eigenvalues (σ²): [7. 3.]
+Singular values squared: [7. 3.]
+
+U matches (up to sign)? True
+V matches (up to sign)? True</code></pre>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-5-contents" aria-controls="callout-5" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Why does this work?
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-5" class="callout-5-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p><strong>The null space connection</strong>: If <span class="math inline">\(v\)</span> is in the null space, then <span class="math inline">\(Av = 0\)</span>, so <span class="math inline">\(A^TAv = 0\)</span>, meaning <span class="math inline">\(v\)</span> is an eigenvector of <span class="math inline">\(A^TA\)</span> with eigenvalue zero.</p>
+<p><strong>The row space connection</strong>: Symmetric matrices have orthogonal eigenvectors (see Strang’s course, or verify numerically). Since <span class="math inline">\(A^TA\)</span> is <span class="math inline">\(n \times n\)</span> and symmetric, its eigenvectors form an orthonormal basis for all of <span class="math inline">\(\mathbb{R}^n\)</span>. We just showed the null space eigenvectors have <span class="math inline">\(\lambda = 0\)</span>. The remaining eigenvectors (with <span class="math inline">\(\lambda &gt; 0\)</span>) must be orthogonal to them. But we also know the row space and null space are orthogonal complements in <span class="math inline">\(\mathbb{R}^n\)</span>. So these remaining eigenvectors span exactly the row space.</p>
+<p>The same logic applies to <span class="math inline">\(AA^T\)</span> on the output side: zero eigenvalue eigenvectors give the left null space, and the rest give the column space.</p>
+<p><em>This is geometric intuition, not a formal proof, but it shows why the eigendecompositions naturally reveal our four subspaces.</em></p>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="svd-finding-structure-in-both-spaces" class="level2">
+<h2 class="anchored" data-anchor-id="svd-finding-structure-in-both-spaces">SVD: Finding structure in both spaces</h2>
+<p>We already computed the SVD above when verifying the eigendecomposition connection. Let’s examine what it returned: orthonormal bases for the input and output spaces, linked through the singular values.</p>
+<div id="c063bf5a" class="cell" data-time_run="2026-01-20T14:53:18.171485+00:00" data-execution_count="49">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Singular values: </span><span class="sc">{</span>sigma<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"</span><span class="ch">\n</span><span class="ss">V (right singular vectors — input space):</span><span class="ch">\n</span><span class="sc">{</span>Vt<span class="sc">.</span>T<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"</span><span class="ch">\n</span><span class="ss">U (left singular vectors — output space):</span><span class="ch">\n</span><span class="sc">{</span>U<span class="sc">}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Singular values: [2.64575131 1.73205081]
+
+V (right singular vectors — input space):
+[[-0.26726124 -0.40824829  0.87287156]
+ [-0.80178373 -0.40824829 -0.43643578]
+ [-0.53452248  0.81649658  0.21821789]]
+
+U (left singular vectors — output space):
+[[-0.70710678 -0.70710678]
+ [-0.70710678  0.70710678]]</code></pre>
+</div>
+</div>
+<p>The SVD returns two singular values: <span class="math inline">\(\sigma_1 \approx 2.65\)</span> and <span class="math inline">\(\sigma_2 \approx 1.73\)</span>. Why only two? For an <span class="math inline">\(m \times n\)</span> matrix, you get at most <span class="math inline">\(\min(m, n)\)</span> nonzero singular values (here, <span class="math inline">\(\min(2, 3) = 2\)</span>). Since both rows of <span class="math inline">\(A\)</span> are linearly independent (rank 2), we get exactly two positive values. The “missing” third direction in <span class="math inline">\(\mathbb{R}^3\)</span> is the null space; it gets killed by <span class="math inline">\(A\)</span>, contributing nothing to the output. The matrices <span class="math inline">\(U\)</span> and <span class="math inline">\(V\)</span> contain orthonormal vectors: <code>U.T @ U</code> and <code>Vt @ Vt.T</code> both yield the identity matrix, confirming that the singular vectors form orthonormal bases for the column space and row space respectively.</p>
+<div id="ac733176" class="cell" data-time_run="2026-01-20T14:53:18.172761+00:00" data-execution_count="50">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"V^T @ V (should be I):</span><span class="ch">\n</span><span class="st">"</span>, np.<span class="bu">round</span>(Vt <span class="op">@</span> Vt.T, <span class="dv">10</span>))</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"</span><span class="ch">\n</span><span class="st">U^T @ U (should be I):</span><span class="ch">\n</span><span class="st">"</span>, np.<span class="bu">round</span>(U.T <span class="op">@</span> U, <span class="dv">10</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>V^T @ V (should be I):
+ [[ 1. -0.  0.]
+ [-0.  1.  0.]
+ [ 0.  0.  1.]]
+
+U^T @ U (should be I):
+ [[ 1. -0.]
+ [-0.  1.]]</code></pre>
+</div>
+</div>
+<section id="the-geometry-of-svd" class="level3">
+<h3 class="anchored" data-anchor-id="the-geometry-of-svd">The geometry of SVD</h3>
+<p>The SVD reveals that <em>any</em> matrix can be decomposed into three simple operations:</p>
+<p><span class="math display">\[A = U \Sigma V^T\]</span></p>
+<p>Geometrically: rotate (<span class="math inline">\(V^T\)</span>) → stretch (<span class="math inline">\(\Sigma\)</span>) → rotate (<span class="math inline">\(U\)</span>)</p>
+<p>Pass a unit circle through each step and watch it transform into an ellipse.</p>
+<p><em>Note: We use a 2×2 matrix here for visualization clarity. With our 2×3 example, the input space is 3D (making the “rotate → stretch → rotate” harder to show in 2D plots). The geometric principle is identical: SVD always decomposes a linear map into rotations and axis-aligned stretching, but square matrices let us see all three steps in the same plane.</em></p>
+<div id="cell-svd-factorization" class="cell" data-time_run="2026-01-20T14:53:18.174067+00:00" data-execution_count="54">
+<div class="cell-output cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="index_files/figure-html/svd-factorization-output-1.png" id="svd-factorization" class="img-fluid quarto-figure quarto-figure-center anchored figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="what-svd-reveals" class="level3">
+<h3 class="anchored" data-anchor-id="what-svd-reveals">What SVD Reveals</h3>
+<p>We’ve seen that SVD decomposes any matrix into rotations and axis-aligned stretching. The singular values tell us <em>how much</em> the matrix stretches along each principal direction. Looking at the ellipse, the longest axis has length <span class="math inline">\(\sigma_1\)</span>, the largest singular value.</p>
+<p>This suggests a natural question: <strong>can we characterize <span class="math inline">\(\sigma_1\)</span> directly as an optimization problem?</strong> Among all unit vectors <span class="math inline">\(v\)</span>, which one gets stretched the most by <span class="math inline">\(A\)</span>, and by how much?</p>
+<p>This viewpoint (finding special directions through optimization) leads to a <strong>variational formulation</strong> of SVD with a rich history (see <a href="https://epubs.siam.org/doi/10.1137/1035134">Stewart’s 1993</a> overview for early contributions). We’ll derive SVD through this <strong>classical variational principle</strong> in the remainder of this post. In Parts 2 and 3, we’ll see how Suykens’ <strong>LS-SVM reformulation</strong> opens the door to kernel extensions and, ultimately, connections to attention mechanisms in transformers.</p>
+</section>
+</section>
+</section>
+<section id="the-variational-perspective" class="level1">
+<h1>The Variational Perspective</h1>
+<div class="callout callout-style-default callout-note callout-titled" title="Variational Principle">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-6-contents" aria-controls="callout-6" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Variational Principle
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-6" class="callout-6-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>A <a href="https://www.sciencedirect.com/topics/physics-and-astronomy/variational-principle">variational Principle</a> reformulates a problem as: “find the object that maximizes (or minimizes) some quantity.” Instead of solving equations directly, we search for extrema. This often reveals structure and enables new solution methods.</p>
+</div>
+</div>
+</div>
+<section id="the-classical-variational-problem" class="level2">
+<h2 class="anchored" data-anchor-id="the-classical-variational-problem">The Classical Variational Problem</h2>
+<p>SVD asks: which directions in input and output space are most strongly coupled through the matrix? We measure coupling strength with the bilinear form:</p>
+<p><span class="math display">\[f(u, v) = u^T A v\]</span></p>
+<p>where <span class="math inline">\(u \in \mathbb{R}^m\)</span> lives in output space and <span class="math inline">\(v \in \mathbb{R}^n\)</span> lives in input space.</p>
+<p><em>Why “bilinear”?</em> The function is linear in each argument separately: if you fix <span class="math inline">\(v\)</span> and vary <span class="math inline">\(u\)</span>, you get a linear function of <span class="math inline">\(u\)</span>; fix <span class="math inline">\(u\)</span> and vary <span class="math inline">\(v\)</span>, linear in <span class="math inline">\(v\)</span>. But it’s not linear in both together: scaling both by 2 multiplies the output by 4, not 2.</p>
+<section id="reading-the-bilinear-form-geometrically" class="level3">
+<h3 class="anchored" data-anchor-id="reading-the-bilinear-form-geometrically">Reading the bilinear form geometrically</h3>
+<p>The expression <span class="math inline">\(u^T A v\)</span> has a natural interpretation: take a unit vector <span class="math inline">\(v\)</span> from input space, pass it through <span class="math inline">\(A\)</span> to get <span class="math inline">\(Av\)</span> in output space, then measure how aligned this output is with <span class="math inline">\(u\)</span> via the dot product <span class="math inline">\(u^T(Av)\)</span>. Maximizing over both <span class="math inline">\(u\)</span> and <span class="math inline">\(v\)</span> means: find the input direction that, when transformed by <span class="math inline">\(A\)</span>, can be most strongly aligned with some output direction.</p>
+<p>This connects to our earlier “maximum stretch” picture. When <span class="math inline">\(u\)</span> perfectly aligns with <span class="math inline">\(Av\)</span>, the dot product equals <span class="math inline">\(\|Av\|\)</span> (since <span class="math inline">\(\|u\|=1\)</span>). So maximizing coupling <em>is</em> finding maximum stretch, but now framed as a relationship between two spaces rather than a property of one.</p>
+</section>
+<section id="why-constrain-the-norms" class="level3">
+<h3 class="anchored" data-anchor-id="why-constrain-the-norms">Why Constrain the Norms?</h3>
+<p>Without constraints, maximizing <span class="math inline">\(u^T A v\)</span> is trivial: just scale <span class="math inline">\(u\)</span> and <span class="math inline">\(v\)</span> to infinity. The coupling grows without bound, telling us nothing about the matrix’s structure.</p>
+<p>Fixing <span class="math inline">\(\|u\| = \|v\| = 1\)</span> removes this scaling freedom. Now we’re asking a meaningful geometric question: among all unit vectors, which pair aligns most strongly through <span class="math inline">\(A\)</span>? And what <em>is</em> this maximum value? We’ll find out by solving the constrained optimization problem.</p>
+</section>
+<section id="making-it-concrete" class="level3">
+<h3 class="anchored" data-anchor-id="making-it-concrete">Making it concrete</h3>
+<p>Let’s see this variational formulation in action. We have our SVD of the 2×3 matrix <span class="math inline">\(A\)</span>: the right singular vectors <span class="math inline">\(v_1, v_2\)</span> span the row space (a 2D plane in <span class="math inline">\(\mathbb{R}^3\)</span>).</p>
+<p>Fix <span class="math inline">\(u = u_1\)</span> and parameterize <span class="math inline">\(v = \cos(t) \cdot v_1 + \sin(t) \cdot v_2\)</span>. This traces a unit circle in that plane. At <span class="math inline">\(t=0\)</span> we’re at <span class="math inline">\(v_1\)</span>; at <span class="math inline">\(t=\pi/2\)</span> we’re at <span class="math inline">\(v_2\)</span>. What does the objective <span class="math inline">\(u_1^T A v\)</span> look like as we walk around this circle?</p>
+<div id="be87c0dd" class="cell" data-time_run="2026-01-20T14:53:18.440835+00:00" data-execution_count="58">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>A <span class="op">=</span> np.array([[<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">0</span>],</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>              [<span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">2</span>]])</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>U, sigma, Vt <span class="op">=</span> np.linalg.svd(A)</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Extract singular vectors</span></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>v1, v2 <span class="op">=</span> Vt[<span class="dv">0</span>], Vt[<span class="dv">1</span>]  <span class="co"># rows of Vt are the right singular vectors</span></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>u1, u2 <span class="op">=</span> U[:, <span class="dv">0</span>], U[:, <span class="dv">1</span>]</span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Parameterize great circle through v1 and v2</span></span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>t <span class="op">=</span> np.linspace(<span class="dv">0</span>, <span class="dv">2</span><span class="op">*</span>np.pi, <span class="dv">200</span>)</span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>v_circle <span class="op">=</span> np.array([np.cos(t_i) <span class="op">*</span> v1 <span class="op">+</span> np.sin(t_i) <span class="op">*</span> v2 <span class="cf">for</span> t_i <span class="kw">in</span> t])</span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Compute objective along this circle</span></span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>objective <span class="op">=</span> [u1 <span class="op">@</span> A <span class="op">@</span> v <span class="cf">for</span> v <span class="kw">in</span> v_circle]</span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">10</span>, <span class="dv">6</span>))</span>
+<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a>ax.plot(t, objective)</span>
+<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a>ax.set_xlabel(<span class="st">'angle'</span>)<span class="op">;</span> ax.set_ylabel(<span class="vs">r'$u_1^T A v$'</span>)</span>
+<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a>ax.axhline(sigma[<span class="dv">0</span>], color<span class="op">=</span><span class="st">'r'</span>, linestyle<span class="op">=</span><span class="st">'--'</span>, alpha<span class="op">=</span><span class="fl">0.5</span>, label<span class="op">=</span><span class="ss">f'σ₁ = </span><span class="sc">{</span>sigma[<span class="dv">0</span>]<span class="sc">:.2f}</span><span class="ss">'</span>)</span>
+<span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-22"><a href="#cb10-22" aria-hidden="true" tabindex="-1"></a>ax.axvline(<span class="dv">0</span>, color<span class="op">=</span><span class="st">'green'</span>, linestyle<span class="op">=</span><span class="st">':'</span>, alpha<span class="op">=</span><span class="fl">0.7</span>)</span>
+<span id="cb10-23"><a href="#cb10-23" aria-hidden="true" tabindex="-1"></a>ax.axvline(np.pi<span class="op">/</span><span class="dv">2</span>, color<span class="op">=</span><span class="st">'purple'</span>, linestyle<span class="op">=</span><span class="st">':'</span>, alpha<span class="op">=</span><span class="fl">0.7</span>)</span>
+<span id="cb10-24"><a href="#cb10-24" aria-hidden="true" tabindex="-1"></a>ax.text(<span class="fl">0.1</span>, <span class="fl">1.5</span>, <span class="vs">r'$v_1$'</span>, color<span class="op">=</span><span class="st">'green'</span>, fontsize<span class="op">=</span><span class="dv">12</span>)</span>
+<span id="cb10-25"><a href="#cb10-25" aria-hidden="true" tabindex="-1"></a>ax.text(np.pi<span class="op">/</span><span class="dv">2</span> <span class="op">+</span> <span class="fl">0.1</span>, <span class="fl">1.5</span>, <span class="vs">r'$v_2$'</span>, color<span class="op">=</span><span class="st">'purple'</span>, fontsize<span class="op">=</span><span class="dv">12</span>)</span>
+<span id="cb10-26"><a href="#cb10-26" aria-hidden="true" tabindex="-1"></a>ax.set_xticks([<span class="dv">0</span>, np.pi<span class="op">/</span><span class="dv">2</span>, np.pi, <span class="dv">3</span><span class="op">*</span>np.pi<span class="op">/</span><span class="dv">2</span>, <span class="dv">2</span><span class="op">*</span>np.pi])</span>
+<span id="cb10-27"><a href="#cb10-27" aria-hidden="true" tabindex="-1"></a>ax.set_xticklabels([<span class="st">'0'</span>, <span class="vs">r'$\pi/2$'</span>, <span class="vs">r'$\pi$'</span>, <span class="vs">r'$3\pi/2$'</span>, <span class="vs">r'$2\pi$'</span>])</span>
+<span id="cb10-28"><a href="#cb10-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-29"><a href="#cb10-29" aria-hidden="true" tabindex="-1"></a>ax.legend()</span>
+<span id="cb10-30"><a href="#cb10-30" aria-hidden="true" tabindex="-1"></a>ax.set_title(<span class="st">'Objective function varying v along great circle (u fixed at u₁)'</span>)</span>
+<span id="cb10-31"><a href="#cb10-31" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="index_files/figure-html/cell-9-output-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>At <span class="math inline">\(v_1\)</span>, the objective reaches its maximum <span class="math inline">\(\sigma_1 = 2.65\)</span>. The curve looks smooth and convex around this point (a nice local maximum). But wait: we also see a minimum at <span class="math inline">\(t=\pi\)</span> (which is just <span class="math inline">\(-v_1\)</span>, giving <span class="math inline">\(-\sigma_1\)</span>). And the curve passes through zero at <span class="math inline">\(v_2\)</span>.</p>
+<p>This hints at something important: we’re not looking at a single global optimum, but at <em>multiple</em> stationary points. The landscape has both maxima and minima. Why?”</p>
+</section>
+<section id="why-multiple-solutions" class="level3">
+<h3 class="anchored" data-anchor-id="why-multiple-solutions">Why Multiple Solutions?</h3>
+<p>In convex optimization, life is simple: a bowl has one bottom, and gradient descent finds it. But our problem is doubly non-convex:</p>
+<ol type="1">
+<li><p><strong>The constraints aren’t convex</strong>: The unit sphere <span class="math inline">\(\|u\| = 1\)</span> isn’t a convex set. Pick any two points on a circle and draw the line segment between them, it passes through the interior, not along the circle. A convex set must contain all such segments.</p></li>
+<li><p><strong>The objective isn’t convex</strong>: The bilinear form <span class="math inline">\(u^T A v\)</span> curves upward in some directions and downward in others (a saddle, not a bowl).</p></li>
+</ol>
+<p>So we won’t find <em>the</em> optimum. Instead, we find <em>all</em> stationary points of the Lagrangian. The beautiful result: these stationary points are exactly the singular vector pairs <span class="math inline">\((u_i, v_i)\)</span>, with stationary values <span class="math inline">\(\pm \sigma_i\)</span>. SVD emerges from solving for every extremum, not just one.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-7-contents" aria-controls="callout-7" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Why isn’t the bilinear form convex?
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-7" class="callout-7-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Consider the simplest bilinear form: <span class="math inline">\(f(x, y) = xy\)</span>. To check convexity, we compute the Hessian (matrix of second derivatives):</p>
+<p><span class="math display">\[H = \begin{bmatrix} \frac{\partial^2 f}{\partial x^2} &amp; \frac{\partial^2 f}{\partial x \partial y} \\ \frac{\partial^2 f}{\partial y \partial x} &amp; \frac{\partial^2 f}{\partial y^2} \end{bmatrix} = \begin{bmatrix} 0 &amp; 1 \\ 1 &amp; 0 \end{bmatrix}\]</span></p>
+<p>For convexity, <span class="math inline">\(H\)</span> must be positive semidefinite (all eigenvalues <span class="math inline">\(\geq 0\)</span>). For a 2×2 matrix, recall that:</p>
+<ul>
+<li>Trace = sum of eigenvalues: <span class="math inline">\(\lambda_1 + \lambda_2 = 0 + 0 = 0\)</span></li>
+<li>Determinant = product of eigenvalues: <span class="math inline">\(\lambda_1 \lambda_2 = 0 \cdot 0 - 1 \cdot 1 = -1\)</span></li>
+</ul>
+<p>From <span class="math inline">\(\lambda_1 + \lambda_2 = 0\)</span> we get <span class="math inline">\(\lambda_2 = -\lambda_1\)</span>. Substituting into <span class="math inline">\(\lambda_1 \lambda_2 = -1\)</span> gives <span class="math inline">\(-\lambda_1^2 = -1\)</span>, so <span class="math inline">\(\lambda_1 = \pm 1\)</span>. The eigenvalues are <span class="math inline">\(\lambda = +1\)</span> and <span class="math inline">\(\lambda = -1\)</span>.</p>
+<p>One positive, one negative: the Hessian is <em>indefinite</em>. This means <span class="math inline">\(f(x,y) = xy\)</span> is a saddle surface: curving upward in some directions, downward in others. Not convex, not concave.</p>
+<p><em>Intuition: <span class="math inline">\(v^T H v\)</span> gives the curvature (second derivative) in direction <span class="math inline">\(v\)</span>. Positive definite means positive curvature in every direction (a bowl). Indefinite means some directions curve up, others down—a saddle.</em></p>
+<p>The general bilinear form <span class="math inline">\(u^T A v\)</span> inherits this structure. No matter what <span class="math inline">\(A\)</span> is, mixing input and output variables creates saddle geometry.</p>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-8-contents" aria-controls="callout-8" aria-expanded="true" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Constrained Optimization Prerequisites
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-8" class="callout-8-contents callout-collapse collapse show">
+<div class="callout-body-container callout-body">
+<p>We’ll use Lagrange multipliers to solve constrained optimization. The core idea: move constraints into the objective function as penalty terms. Each constraint gets a multiplier representing the “price” for violating it. This converts a constrained problem into an unconstrained one we can solve with calculus.</p>
+<p>If you need a refresher:</p>
+<ul>
+<li><p><strong>For intuition</strong>: The <a href="https://www.youtube.com/watch?v=AM6BY4btj-M">Visually Explained</a> series builds geometric understanding of convex optimization, Lagrangians, and KKT conditions</p></li>
+<li><p><strong>For depth</strong>: Boyd &amp; Vandenberghe’s <a href="https://stanford.edu/~boyd/cvxbook/">Convex Optimization</a> is the standard reference (free PDF available, and Boyd’s Stanford lectures are online)</p></li>
+</ul>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-9-contents" aria-controls="callout-9" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Derivatives with Respect to Vectors
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-9" class="callout-9-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>The Lagrangian derivation requires differentiating with respect to vectors <span class="math inline">\(u\)</span> and <span class="math inline">\(v\)</span>. If this is unfamiliar, Chieh Wu’s <a href="https://www.youtube.com/watch?v=kzsW_pnqsFs&amp;list=PLdk2fd27CQzQo1DEthJ5MDBHoC66_1aDN&amp;index=2">Derivatives with Respect to Vectors</a> provides a clear introduction.</p>
+<p>For brevity here: think of <span class="math inline">\(\|u\|^2 = u^T u\)</span> as analogous to <span class="math inline">\(x^2\)</span> in single variable calculus, and <span class="math inline">\(u^T A v\)</span> as analogous to <span class="math inline">\(xy\)</span>. The derivative of <span class="math inline">\(x^2\)</span> is <span class="math inline">\(2x\)</span>; the derivative of <span class="math inline">\(\|u\|^2\)</span> with respect to <span class="math inline">\(u\)</span> is <span class="math inline">\(2u\)</span>. Similarly, <span class="math inline">\(\frac{\partial}{\partial u}(u^T A v) = Av\)</span> (treating <span class="math inline">\(v\)</span> as constant). The rules follow the same intuition as polynomials of degree 2.</p>
+</div>
+</div>
+</div>
+</section>
+<section id="the-lagrangian-derivation" class="level3">
+<h3 class="anchored" data-anchor-id="the-lagrangian-derivation">The Lagrangian Derivation</h3>
+<p>We want to find stationary points of:</p>
+<p><span class="math display">\[\max_{u, v} \; u^T A v \quad \text{subject to} \quad \|u\|^2 = 1, \; \|v\|^2 = 1\]</span></p>
+<p>Introduce multipliers <span class="math inline">\(\lambda\)</span> and <span class="math inline">\(\mu\)</span> for the two constraints:</p>
+<p><span class="math display">\[\mathcal{L}(u, v, \lambda, \mu) = u^T A v - \frac{\lambda}{2}(\|u\|^2 - 1) - \frac{\mu}{2}(\|v\|^2 - 1)\]</span></p>
+<p>Differentiate and set to zero:</p>
+<p><span class="math display">\[\frac{\partial \mathcal{L}}{\partial u} = Av - \lambda u = 0 \quad \Rightarrow \quad Av = \lambda u\]</span></p>
+<p><span class="math display">\[\frac{\partial \mathcal{L}}{\partial v} = A^T u - \mu v = 0 \quad \Rightarrow \quad A^T u = \mu v\]</span></p>
+<p>Multiply the first equation by <span class="math inline">\(u^T\)</span>: we get <span class="math inline">\(u^T A v = \lambda\)</span> (using <span class="math inline">\(\|u\|^2 = 1\)</span>). Multiply the second by <span class="math inline">\(v^T\)</span>: we get <span class="math inline">\(v^T A^T u = \mu\)</span>. But <span class="math inline">\(v^T A^T u = (u^T A v)^T = u^T A v\)</span>, so <span class="math inline">\(\lambda = \mu\)</span>.</p>
+</section>
+<section id="the-shifted-eigenvalue-problem" class="level3">
+<h3 class="anchored" data-anchor-id="the-shifted-eigenvalue-problem">The Shifted Eigenvalue Problem</h3>
+<p>With <span class="math inline">\(\lambda = \mu\)</span>, stack the two conditions into a block matrix:</p>
+<p><span class="math display">\[\begin{bmatrix} 0 &amp; A \\ A^T &amp; 0 \end{bmatrix} \begin{bmatrix} u \\ v \end{bmatrix} = \lambda \begin{bmatrix} u \\ v \end{bmatrix}\]</span></p>
+<p>Why “shifted”? The diagonal blocks are zero: all the coupling lives in the off-diagonal blocks <span class="math inline">\(A\)</span> and <span class="math inline">\(A^T\)</span>. The eigenvalues of this block matrix are exactly <span class="math inline">\(\pm \sigma_1, \pm \sigma_2, \ldots, \pm \sigma_r\)</span> (plus zeros if the matrix is rectangular), where <span class="math inline">\(\sigma_i\)</span> are the singular values of <span class="math inline">\(A\)</span>.</p>
+</section>
+<section id="recovering-the-svd" class="level3">
+<h3 class="anchored" data-anchor-id="recovering-the-svd">Recovering the SVD</h3>
+<p>From the shifted eigenvalue problem, we get <span class="math inline">\(r\)</span> pairs of eigenvectors <span class="math inline">\((u_i, v_i)\)</span> with eigenvalues <span class="math inline">\(\pm \sigma_i\)</span>. Stack the <span class="math inline">\(u_i\)</span> as columns of <span class="math inline">\(U\)</span>, the <span class="math inline">\(v_i\)</span> as columns of <span class="math inline">\(V\)</span>, and place <span class="math inline">\(\sigma_i\)</span> on the diagonal of <span class="math inline">\(\Sigma\)</span>.</p>
+<p>The stationarity conditions <span class="math inline">\(Av_i = \sigma_i u_i\)</span> become:</p>
+<p><span class="math display">\[AV = U\Sigma\]</span></p>
+<p>Multiply on the right by <span class="math inline">\(V^T\)</span>:</p>
+<p><span class="math display">\[A = U \Sigma V^T\]</span></p>
+<p>The variational principle didn’t just find singular vectors, it derived the entire factorization from “find maximally coupled directions.”</p>
+<p>Let’s verify this: the eigenvalues of the block matrix should be exactly <span class="math inline">\(\pm\sigma_i\)</span> (plus a zero from the null space):</p>
+<div id="43e30e7d" class="cell" data-time_run="2026-01-20T14:53:18.501878+00:00" data-execution_count="53">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Build the shifted block matrix</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>m, n <span class="op">=</span> A.shape</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>block <span class="op">=</span> np.block([[np.zeros((m, m)), A],</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>                  [A.T, np.zeros((n, n))]])</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Its eigenvalues should be ±σ and zeros</span></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>eigs <span class="op">=</span> np.linalg.eigvalsh(block)</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Block matrix eigenvalues:"</span>, np.sort(eigs)[::<span class="op">-</span><span class="dv">1</span>])</span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Singular values:"</span>, sigma)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Block matrix eigenvalues: [ 2.64575131e+00  1.73205081e+00 -1.55431223e-15 -1.73205081e+00
+ -2.64575131e+00]
+Singular values: [2.64575131 1.73205081]</code></pre>
+</div>
+</div>
+<p>The eigenvalues come in pairs <span class="math inline">\(\pm\sigma_i\)</span>, confirming the theory. The value near <span class="math inline">\(10^{-15}\)</span> is numerically zero. This corresponds to the null space direction (our matrix has rank 2, but the block matrix is 5×5, so one eigenvalue must be zero).</p>
+<p>This classical variational formulation isn’t how we compute SVD in practice (direct algorithms are faster and more stable). But the formulation matters for what comes next: Suykens’ LS-SVM reformulation rewrites this same variational principle in a way that admits kernelization, opening the door to nonlinear extensions and, ultimately, connections to attention mechanisms.</p>
+</section>
+</section>
+<section id="next-the-ls-svm-variational-reformulation" class="level2">
+<h2 class="anchored" data-anchor-id="next-the-ls-svm-variational-reformulation">Next: The LS-SVM Variational Reformulation</h2>
+<p>We’ve derived SVD from a variational principle: find maximally coupled directions between input and output space. The classical formulation is elegant, but it’s locked to linear algebra with hard constraints on unit spheres and no obvious path to nonlinear extensions.</p>
+<p>In <strong>Part 2</strong>, we’ll see how Johan Suykens reformulates this same problem within the LS-SVM framework. The key insight: treat rows and columns of a matrix as <em>two data sources</em> with different feature maps. This seemingly small shift unlocks kernel methods and opens a door that leads, eventually, to the attention mechanism in transformers.</p>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp("https:\/\/fr\.anckalbi\.net");
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
