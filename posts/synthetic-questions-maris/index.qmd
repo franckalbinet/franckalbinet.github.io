@@ -3,7 +3,7 @@ title: "Building Better RAG Evaluations"
 description: "Systematic Approach to Synthetic Question Generation for Marine Radioactivity Research"
 author: "Franck Albinet"
 date: "2025-08-07"
-categories: [RAG, LLM Evals, Radioactivity]
+categories: [RAG, LLMs, Evals, Radioactivity]
 ---
 
 

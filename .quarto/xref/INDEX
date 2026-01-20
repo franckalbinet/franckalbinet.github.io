@@ -28,5 +28,14 @@
   },
   "posts/mastering-ls-svm/index.qmd": {
     "index.html": "733d7e74"
+  },
+  "posts/svd-revisited/index.qmd": {
+    "index.html": "ff8eec70"
+  },
+  "posts/svd-revisited/index.ipynb": {
+    "index.html": "b816e0de"
+  },
+  "posts/svd-geometry-to-variational/index.ipynb": {
+    "index.html": "63600051"
   }
 }

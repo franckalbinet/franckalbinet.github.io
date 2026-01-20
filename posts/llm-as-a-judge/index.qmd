@@ -3,7 +3,7 @@ title: "Why LLMs Can Actually Judge Other LLMs (And It's Not Cheating)"
 description: "The statistical foundation that makes LLM-as-Judge evaluation rigorous."
 author: "Franck Albinet"
 date: "2025-08-21"
-categories: [LLM Evals, Statistics]
+categories: [LLMs, Evals, Statistics]
 # image: "image.jpg"
 ---
 

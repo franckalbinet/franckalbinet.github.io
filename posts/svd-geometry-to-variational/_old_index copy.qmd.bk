@@ -1,0 +1,38 @@
+---
+title: "SVD Through Variational Principles: From Geometry to Kernels"
+description: "How Suykens' LS-SVM reformulation connects classical linear algebra to nonlinear extensions and attention mechanisms"
+author: "Franck Albinet"
+date: "2026-01-07"
+categories: [Linear Algebra, Kernel Methods, LLMs]
+---
+
+The Singular Value Decomposition has a rich history spanning over 150 years, with contributions from Beltrami, Jordan, Eckart & Young, Lanczos, and many others. Stewart's 1993 overview tells this story well. Today SVD is everywhere: dimensionality reduction, recommender systems, numerical linear algebra, signal processing.
+
+For most practitioners, SVD is a single line: `u, s, v = torch.linalg.svd(A)`. The factorization $A = U\Sigma V^T$ is derived by finding eigenvectors of $A^T A$ and $AA^T$, recognizing they share the same nonzero eigenvalues, and relating the two bases through the singular values. But there is another formulation: derive SVD from a **variational principle**, finding unit vectors $u$ and $v$ that maximize their coupling $u^T A v$. This is not merely an alternative derivation. It is the entry point to generalizations that the factorization view obscures.
+
+In 2016, Johan Suykens showed that this variational characterization fits naturally within the Least Squares Support Vector Machine (LS-SVM) framework. The payoff: SVD becomes kernelizable, with asymmetric kernels, two distinct feature maps, and out-of-sample extensions. More recently, this kernel SVD framework has been connected to the attention mechanism in transformers, offering both theoretical insight and practical efficiency gains.
+
+This post develops that foundation. We start with Gilbert Strang's geometric view of SVD, then move to the classical variational formulation, and finally to Suykens' reformulation. Part 2 will show how this leads to [Primal-Attention](https://arxiv.org/abs/2305.19798).
+
+
+## The Geometry of SVD
+
+### Four Subspaces and the Circle-to-Ellipse Picture
+
+Gilbert Strang calls SVD the "climax" of linear algebra, and for good reason. It answers a deceptively simple question: given a matrix $A$ that maps vectors from $\mathbb{R}^n$ to $\mathbb{R}^m$, can we find orthonormal bases for both spaces such that $A$ simply maps the $k$-th input basis vector to a scaled version of the $k$-th output basis vector?
+
+The answer is yes, and the scaling factors are the singular values.
+
+What makes this remarkable is the orthogonality constraint. In general, if you pick orthonormal vectors $v_1, \ldots, v_r$ in the input space, their images $Av_1, \ldots, Av_r$ will not be orthogonal. SVD finds the special directions where orthogonality is preserved through the mapping. Strang puts it simply: "orthogonal in, orthogonal out."
+
+This immediately connects the four fundamental subspaces of a matrix. The right singular vectors $V$ split the input space: the first $r$ span the row space, the rest span the null space. The left singular vectors $U$ split the output space: the first $r$ span the column space, the rest span the left null space. SVD gives orthonormal bases for all four, simultaneously.
+
+
+## The "Classical" Variational Formulation
+
+## The "LS-SVM" Variational Formulation
+
+
+::: {.callout-note title="Variational Principle" collapse="true"}
+A variational Principle is defined as a fundamental concept in mathematical physics that aims to determine the path, function, or object that maximizes or minimizes a mathematical quantity known as a functional. It encompasses various principles, such as the principle of least action, which states that a moving system follows the path that minimizes the action integral.
+:::

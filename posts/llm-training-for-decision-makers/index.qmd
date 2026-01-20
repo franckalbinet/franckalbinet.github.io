@@ -3,7 +3,7 @@ title: "What Decision-Makers Need to Know About AI Training"
 description: "Cutting Through the Hype to Understand the Capabilities You're Actually Getting"
 author: "Franck Albinet"
 date: "2025-08-26"
-categories: [LLM Training]
+categories: [LLMs, General-Audience]
 ---
 
 You've probably heard that AI models cost millions to train, that they "learn" from data, and that the latest ones can "reason" through complex problems. Between breathless media coverage, marketing pitches from tech companies, and technical discussions filled with jargon and overloaded terminology, it's hard to know what's actually happening when we "train" an AI model.
