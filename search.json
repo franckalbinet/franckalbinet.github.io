@@ -333,7 +333,7 @@
     "href": "posts/svd-geometry-to-variational/index.html#next-the-ls-svm-variational-reformulation",
     "title": "SVD Through Variational Principles (Part 1): From Geometry to the Classical Formulation",
     "section": "Next: The LS-SVM Variational Reformulation",
-    "text": "Next: The LS-SVM Variational Reformulation\nWe’ve derived SVD from a variational principle: find maximally coupled directions between input and output space. The classical formulation is elegant, but it’s locked to linear algebra with hard constraints on unit spheres and no obvious path to nonlinear extensions.\nIn Part 2, we’ll see how Johan Suykens reformulates this same problem within the LS-SVM framework. The key insight: treat rows and columns of a matrix as two data sources with different feature maps. This seemingly small shift unlocks kernel methods and opens a door that leads, eventually, to the attention mechanism in transformers."
+    "text": "Next: The LS-SVM Variational Reformulation\nWe’ve derived SVD from a variational principle: find maximally coupled directions between input and output space. The classical formulation is elegant, but it’s locked to linear algebra with hard constraints on unit spheres and no obvious path to nonlinear extensions.\nIn Part 2, we’ll see how Johan Suykens reformulates this problem within LS-SVM: replacing hard sphere constraints with regularization, and reframing the matrix as two data sources with feature maps. This seemingly small shift enables kernelization, including asymmetric kernels, which turn out to be exactly what self-attention needs."
   },
   {
     "objectID": "index.html",
