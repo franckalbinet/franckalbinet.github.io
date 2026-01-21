@@ -270,7 +270,7 @@ window.Quarto = {
 
 
 
-<p>As AI scales, so does its energy footprint. <a href="https://www.esat.kuleuven.be/sista/members/suykens.html">Johan Suykens</a>, creator of Least Squares Support Vector Machines (LS-SVM), has spent decades exploring how kernel methods can yield elegant, compact solutions. His 2016 paper <a href="https://www.sciencedirect.com/science/article/pii/S1063520315001360">“SVD revisited”</a> reformulates SVD through a variational principle that reveals deep structure. A structure that connects directly to attention mechanisms in transformers. The recent <a href="https://arxiv.org/abs/2305.19798">Primal-Attention</a> paper follows this thread, showing how kernel SVD enables equivalent performance with far more compact networks. This isn’t optimization for its own sake; it’s a path toward sustainable AI.</p>
+<p>As AI scales, so does its energy footprint. <a href="https://www.esat.kuleuven.be/sista/members/suykens.html">Johan Suykens</a>, creator of Least Squares Support Vector Machines (LS-SVM), has spent decades exploring how kernel methods can yield elegant, compact solutions. His 2016 paper <a href="https://www.sciencedirect.com/science/article/pii/S1063520315001360">“SVD revisited”</a> reformulates SVD through a variational principle that reveals deep structure. A structure that connects directly to attention mechanisms in transformers. The 2023 <a href="https://arxiv.org/abs/2305.19798">Primal-Attention</a> paper follows this thread, showing how kernel SVD enables equivalent performance with far more compact networks. This isn’t optimization for its own sake; it’s a path toward sustainable AI.</p>
 <p>These papers are technically demanding and assume significant background. My goal is to smooth the learning curve, to reveal the beauty and insight of this framework, and why it matters for the future of AI.</p>
 <p><strong>This is a three part series:</strong></p>
 <ol type="1">
@@ -495,7 +495,11 @@ Figure&nbsp;1: Input space decomposition
 <section id="finding-the-four-subspaces" class="level3">
 <h3 class="anchored" data-anchor-id="finding-the-four-subspaces">Finding the Four Subspaces</h3>
 <p>We’ve seen the geometry: four subspaces, with <span class="math inline">\(A\)</span> creating a perfect map between row space and column space. But how do we actually <em>find</em> orthonormal bases for these subspaces?</p>
-<p>The trick: form two square, symmetric matrices: - <span class="math inline">\(A^TA\)</span> (lives in input space <span class="math inline">\(\mathbb{R}^n\)</span>) captures how columns correlate - <span class="math inline">\(AA^T\)</span> (lives in output space <span class="math inline">\(\mathbb{R}^m\)</span>) captures how rows correlate</p>
+<p>The trick: form two square, symmetric matrices:</p>
+<ul>
+<li><span class="math inline">\(A^TA\)</span> (lives in input space <span class="math inline">\(\mathbb{R}^n\)</span>) captures how columns correlate</li>
+<li><span class="math inline">\(AA^T\)</span> (lives in output space <span class="math inline">\(\mathbb{R}^m\)</span>) captures how rows correlate</li>
+</ul>
 <p>For our matrix <span class="math inline">\(A\)</span>, these are:</p>
 <p><span class="math display">\[A^TA = \begin{bmatrix} 1 &amp; 2 &amp; 0 \\ 2 &amp; 5 &amp; 2 \\ 0 &amp; 2 &amp; 4 \end{bmatrix}, \quad AA^T = \begin{bmatrix} 5 &amp; 2 \\ 2 &amp; 5 \end{bmatrix}\]</span></p>
 <p>Both are symmetric, so they have orthogonal eigenvectors. And the beautiful fact: these eigenvectors partition exactly into our four subspaces.</p>
