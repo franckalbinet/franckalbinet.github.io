@@ -258,7 +258,7 @@ window.Quarto = {
   <li><a href="#the-shifted-eigenvalue-problem" id="toc-the-shifted-eigenvalue-problem" class="nav-link" data-scroll-target="#the-shifted-eigenvalue-problem">The Shifted Eigenvalue Problem</a></li>
   <li><a href="#recovering-the-svd" id="toc-recovering-the-svd" class="nav-link" data-scroll-target="#recovering-the-svd">Recovering the SVD</a></li>
   </ul></li>
-  <li><a href="#next-the-ls-svm-variational-reformulation" id="toc-next-the-ls-svm-variational-reformulation" class="nav-link" data-scroll-target="#next-the-ls-svm-variational-reformulation">Next: The LS-SVM Variational Reformulation</a></li>
+  <li><a href="#next-the-ls-svm-reformulation" id="toc-next-the-ls-svm-reformulation" class="nav-link" data-scroll-target="#next-the-ls-svm-reformulation">Next: The LS-SVM Reformulation</a></li>
   </ul></li>
   </ul>
 </nav>
@@ -716,7 +716,7 @@ Variational Principle
 </div>
 </div>
 </div>
-<p>At <span class="math inline">\(v_1\)</span>, the objective reaches its maximum <span class="math inline">\(\sigma_1 = 2.65\)</span>. The curve looks smooth and convex around this point (a nice local maximum). But wait: we also see a minimum at <span class="math inline">\(t=\pi\)</span> (which is just <span class="math inline">\(-v_1\)</span>, giving <span class="math inline">\(-\sigma_1\)</span>). And the curve passes through zero at <span class="math inline">\(v_2\)</span>.</p>
+<p>At <span class="math inline">\(v_1\)</span>, the objective reaches its maximum <span class="math inline">\(\sigma_1 = 2.65\)</span>. The curve looks smooth and convex around this point. But wait: we also see a minimum at <span class="math inline">\(t=\pi\)</span> (which is just <span class="math inline">\(-v_1\)</span>, giving <span class="math inline">\(-\sigma_1\)</span>). And the curve passes through zero at <span class="math inline">\(v_2\)</span>.</p>
 <p>This hints at something important: we’re not looking at a single global optimum, but at <em>multiple</em> stationary points. The landscape has both maxima and minima. Why?”</p>
 </section>
 <section id="why-multiple-solutions" class="level3">
@@ -818,7 +818,7 @@ Derivatives with Respect to Vectors
 <p><span class="math display">\[AV = U\Sigma\]</span></p>
 <p>Multiply on the right by <span class="math inline">\(V^T\)</span>:</p>
 <p><span class="math display">\[A = U \Sigma V^T\]</span></p>
-<p>The variational principle didn’t just find singular vectors, it derived the entire factorization from “find maximally coupled directions.”</p>
+<p>The variational principle didn’t just find singular vectors, it derived the entire factorization from “find maximally coupled directions”.</p>
 <p>Let’s verify this: the eigenvalues of the block matrix should be exactly <span class="math inline">\(\pm\sigma_i\)</span> (plus a zero from the null space):</p>
 <div id="43e30e7d" class="cell" data-time_run="2026-01-20T14:53:18.501878+00:00" data-execution_count="53">
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Build the shifted block matrix</span></span>
@@ -837,13 +837,15 @@ Singular values: [2.64575131 1.73205081]</code></pre>
 </div>
 </div>
 <p>The eigenvalues come in pairs <span class="math inline">\(\pm\sigma_i\)</span>, confirming the theory. The value near <span class="math inline">\(10^{-15}\)</span> is numerically zero. This corresponds to the null space direction (our matrix has rank 2, but the block matrix is 5×5, so one eigenvalue must be zero).</p>
-<p>This classical variational formulation isn’t how we compute SVD in practice (direct algorithms are faster and more stable). But the formulation matters for what comes next: Suykens’ LS-SVM reformulation rewrites this same variational principle in a way that admits kernelization, opening the door to nonlinear extensions and, ultimately, connections to attention mechanisms.</p>
+<p>This classical variational formulation isn’t how we compute SVD in practice (numerical libraries handle that efficiently). But understanding the variational view opens a door to something deeper.</p>
+<p>What if we could replace the hard constraints <span class="math inline">\(\|u\|^2 = 1\)</span> and <span class="math inline">\(\|v\|^2 = 1\)</span> with something more flexible? Instead of forcing unit norm, imagine two opposing forces: one rewards capturing variance through projections, while the other charges a price for making <span class="math inline">\(w\)</span> large. Want to maximize variance? Sure, but growing <span class="math inline">\(w\)</span> costs you.</p>
 </section>
 </section>
-<section id="next-the-ls-svm-variational-reformulation" class="level2">
-<h2 class="anchored" data-anchor-id="next-the-ls-svm-variational-reformulation">Next: The LS-SVM Variational Reformulation</h2>
-<p>We’ve derived SVD from a variational principle: find maximally coupled directions between input and output space. The classical formulation is elegant, but it’s locked to linear algebra with hard constraints on unit spheres and no obvious path to nonlinear extensions.</p>
-<p>In <strong>Part 2</strong>, we’ll see how Johan Suykens reformulates this problem within LS-SVM: replacing hard sphere constraints with regularization, and reframing the matrix as two data sources with feature maps. This seemingly small shift enables kernelization, including <strong>asymmetric kernels, which turn out to be exactly what self-attention needs</strong>.</p>
+<section id="next-the-ls-svm-reformulation" class="level2">
+<h2 class="anchored" data-anchor-id="next-the-ls-svm-reformulation">Next: The LS-SVM Reformulation</h2>
+<p>In Part 2, we take a detour through PCA to build intuition for this new perspective. Johan Suykens’ LS-SVM framework replaces hard constraints with competing forces: variance versus regularization. The result? Equilibrium points that emerge at special “quantized” values of the regularization parameter, corresponding exactly to the principal components.</p>
+<p>This isn’t about maximizing or minimizing. It’s about finding balance. And the geometry is beautiful: ridges, thalwegs, and polar landscapes that reveal the structure hidden in your data.</p>
+<p>Once we’ve internalized this for PCA, we’ll be ready for Part 3: SVD revisited, where two data sources, asymmetric kernels, and the connection to attention mechanisms await.</p>
 
 
 </section>
