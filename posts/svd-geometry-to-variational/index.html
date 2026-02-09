@@ -272,12 +272,13 @@ window.Quarto = {
 
 <p>As AI scales, so does its energy footprint. <a href="https://www.esat.kuleuven.be/sista/members/suykens.html">Johan Suykens</a>, creator of Least Squares Support Vector Machines (LS-SVM), has spent decades exploring how kernel methods can yield elegant, compact solutions. His 2016 paper <a href="https://www.sciencedirect.com/science/article/pii/S1063520315001360">“SVD revisited”</a> reformulates SVD through a variational principle that reveals deep structure. A structure that connects directly to attention mechanisms in transformers. The 2023 <a href="https://arxiv.org/abs/2305.19798">Primal-Attention</a> paper follows this thread, showing how kernel SVD enables equivalent performance with far more compact networks. This isn’t optimization for its own sake; it’s a path toward sustainable AI.</p>
 <p>These papers are technically demanding and assume significant background. My goal is to smooth the learning curve, to reveal the beauty and insight of this framework, and why it matters for the future of AI.</p>
-<p><strong>This is a three part series:</strong></p>
-<ol type="1">
-<li><strong>Part 1 (this post)</strong>: Rebuild SVD from geometry to its classical variational formulation</li>
-<li><strong>Part 2</strong>: Suykens’ LS-SVM reformulation and kernel SVD (covering “SVD revisited”)</li>
-<li><strong>Part 3</strong>: From kernel SVD to attention mechanisms (covering “Primal-Attention”)</li>
-</ol>
+<p>This is a four-part series:</p>
+<ul>
+<li><strong>Part 1</strong> (this post): Rebuild SVD from geometry to its classical variational formulation</li>
+<li><strong>Part 2</strong>: A detour through PCA to understand the LS-SVM mindset: competing forces, equilibrium, and beautiful geometry</li>
+<li><strong>Part 3</strong>: Suykens’ LS-SVM reformulation of SVD and kernelization (covering “SVD revisited”)</li>
+<li><strong>Part 4</strong>: From kernel SVD to attention mechanisms (covering “Primal-Attention”)</li>
+</ul>
 <p>We start by asking: <strong>what does a matrix do to space</strong>? Most ML engineers know SVD as <code>u, s, v = torch.linalg.svd(A)</code>, but the geometric intuition fades. For square matrices, eigenvalues answer this. For rectangular matrices, they can’t. So we exhibit the four fundamental subspaces, revealing that <strong>singular vectors are maximally coupled</strong> through the matrix. We then show how the classical variational formulation, a different perspective, arrives at the same solution.</p>
 <p><strong>Our audience</strong>: ML/AI practitioners who want geometric intuition alongside rigor. Proofs where they illuminate, code where it grounds abstraction.</p>
 <section id="from-eigenvalues-to-svd" class="level1">
