@@ -2,6 +2,7 @@
   {
     "listing": "/index.html",
     "items": [
+      "/posts/ls-svm-kernel-pca/index.html",
       "/posts/svd-geometry-to-variational/index.html",
       "/posts/llm-training-for-decision-makers/index.html",
       "/posts/llm-as-a-judge/index.html",
