@@ -240,7 +240,7 @@ window.Quarto = {
   <li><a href="#from-lagrangian-to-kkt-conditions" id="toc-from-lagrangian-to-kkt-conditions" class="nav-link" data-scroll-target="#from-lagrangian-to-kkt-conditions">From Lagrangian to KKT Conditions</a></li>
   <li><a href="#from-kkt-to-the-eigenvalue-problem" id="toc-from-kkt-to-the-eigenvalue-problem" class="nav-link" data-scroll-target="#from-kkt-to-the-eigenvalue-problem">From KKT to the Eigenvalue Problem</a></li>
   <li><a href="#visualizing-the-objective-landscape" id="toc-visualizing-the-objective-landscape" class="nav-link" data-scroll-target="#visualizing-the-objective-landscape">Visualizing the Objective Landscape</a></li>
-  <li><a href="#why-γ-controls-the-landscape" id="toc-why-γ-controls-the-landscape" class="nav-link" data-scroll-target="#why-γ-controls-the-landscape">Why γ Controls the Landscape</a></li>
+  <li><a href="#why-gamma-controls-the-landscape" id="toc-why-gamma-controls-the-landscape" class="nav-link" data-scroll-target="#why-gamma-controls-the-landscape">Why <span class="math inline">\(\gamma\)</span> Controls the Landscape</a></li>
   <li><a href="#from-linear-to-nonlinear-the-kernel-trick" id="toc-from-linear-to-nonlinear-the-kernel-trick" class="nav-link" data-scroll-target="#from-linear-to-nonlinear-the-kernel-trick">From Linear to Nonlinear: The Kernel Trick</a></li>
   </ul></li>
   <li><a href="#whats-next" id="toc-whats-next" class="nav-link" data-scroll-target="#whats-next">What’s Next</a></li>
@@ -261,7 +261,7 @@ window.Quarto = {
 <h2 class="anchored" data-anchor-id="classical-pca-the-hard-constraint-formulation">Classical PCA: The Hard Constraint Formulation</h2>
 <p>Given centered data points <span class="math inline">\(x_1, \ldots, x_N \in \mathbb{R}^d\)</span>, PCA looks for the projection direction <span class="math inline">\(w \in \mathbb{R}^d\)</span> that maximizes the variance of the projected data:</p>
 <p><span class="math display">\[\max_w \text{Var}(w^T x) = \frac{1}{N} \sum_{k=1}^N (w^T x_k)^2\]</span></p>
-<p>subject to <span class="math inline">\(\|w\|^2 = 1\)</span>.</p>
+<p>subject to <span class="math inline">\(\|w\|^2 = 1\)</span> (the unit norm constraint).</p>
 <p>Each dot product <span class="math inline">\(w^T x_k\)</span> measures how much data point <span class="math inline">\(x_k\)</span> aligns with <span class="math inline">\(w\)</span>. Squaring ensures opposite orientations along the same axis contribute equally. The constraint keeps <span class="math inline">\(w\)</span> from growing arbitrarily large, which would trivially inflate variance.</p>
 <p>The goal: find the unit direction that aligns most strongly with the data on average, the main axis of variation in the data cloud.</p>
 <section id="from-sums-to-covariance" class="level3">
@@ -311,17 +311,29 @@ Where does the covariance C come from?
 </section>
 <section id="solving-the-constrained-optimization" class="level3">
 <h3 class="anchored" data-anchor-id="solving-the-constrained-optimization">Solving the Constrained Optimization</h3>
-<p>To maximize <span class="math inline">\(w^T C w\)</span> subject to <span class="math inline">\(\|w\|^2 = 1\)</span>, we use the method of Lagrange multipliers. (If this technique is unfamiliar, we introduced it in <a href="https://fr.anckalbi.net/posts/svd-geometry-to-variational">Part 1</a>.) The Lagrangian is:</p>
+<p>To maximize <span class="math inline">\(w^T C w\)</span> subject to <span class="math inline">\(\|w\|^2 = 1\)</span>, we use the method of Lagrange multipliers. (If this technique is unfamiliar, we introduced it in <a href="https://fr.anckalbi.net/posts/svd-geometry-to-variational">Part 1</a>.)</p>
+<p>The Lagrangian is:</p>
 <p><span class="math display">\[\mathcal{L}(w, \lambda) = w^T C w - \lambda(w^T w - 1)\]</span></p>
 <p>Taking the derivative with respect to <span class="math inline">\(w\)</span> and setting it to zero:</p>
 <p><span class="math display">\[\frac{\partial \mathcal{L}}{\partial w} = 2Cw - 2\lambda w = 0\]</span></p>
-<p>This gives us the <strong>eigenvalue problem</strong>:</p>
-<p><span class="math display">\[Cw = \lambda w\]</span></p>
-<p>The variance along direction <span class="math inline">\(w\)</span> then equals:</p>
-<p><span class="math display">\[w^T C w = w^T (\lambda w) = \lambda (w^T w) = \lambda \cdot 1 = \lambda\]</span></p>
-<p>where we used the constraint <span class="math inline">\(w^T w = 1\)</span>. So eigenvalues <em>are</em> variances.</p>
-<p><strong>Multiple solutions emerge.</strong> The covariance matrix <span class="math inline">\(C\)</span> has multiple eigenvectors (in our 2D example, two of them, which we’ll compute shortly). Each one is a stationary point of our optimization. Which gives the maximum variance? The one with the largest eigenvalue, since variance equals <span class="math inline">\(\lambda\)</span>.</p>
-<p>As in <a href="https://fr.anckalbi.net/posts/svd-geometry-to-variational">Part 1</a>, we asked for a maximum, but Lagrange multipliers found all stationary points. The non-convexity is a feature, not a bug. A single optimization problem yields the entire eigenspectrum. The first principal component is the eigenvector with the largest eigenvalue; the others follow in order.</p>
+<p>This gives the <strong>eigenvalue problem</strong> <span class="math inline">\(Cw = \lambda w\)</span> (the canonical equation <span class="math inline">\(Ax = \lambda x\)</span>). Since <span class="math inline">\(C\)</span> is symmetric, it has exactly <span class="math inline">\(d\)</span> eigenpairs <span class="math inline">\((\lambda_i, w_i)\)</span>, one per dimension. A single optimization problem yields the entire eigenspectrum: the first principal component is the eigenvector with the largest <span class="math inline">\(\lambda_i\)</span>; the others follow in order.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Stationary points, critical points, and a note on non-convexity
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-2" class="callout-2-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Setting <span class="math inline">\(\frac{\partial \mathcal{L}}{\partial w} = 0\)</span> finds <strong>stationary points</strong> of the Lagrangian: points where the gradient vanishes. These are also called <strong>critical points</strong>; the two terms mean the same thing. Stationary points include maxima, minima, and saddle points.</p>
+<p>A note on vocabulary: in deep learning, “non-convex” usually flags the presence of many local optima. Here it means something more specific: the constraint <span class="math inline">\(w^T w = 1\)</span> defines a unit circle, a non-convex set. That geometry allows the objective to have a maximum, a minimum, rather than a unique solution.</p>
+</div>
+</div>
+</div>
 </section>
 <section id="the-variance-landscape" class="level3">
 <h3 class="anchored" data-anchor-id="the-variance-landscape">The Variance Landscape</h3>
@@ -394,7 +406,7 @@ Corresponding direction: [ 0.70710678 -0.70710678]</code></pre>
 <h2 class="anchored" data-anchor-id="the-ls-svm-reformulation-from-hard-constraints-to-competing-forces">The LS-SVM Reformulation: From Hard Constraints to Competing Forces</h2>
 <p>Instead of enforcing unit norm as a hard constraint, this reformulation introduces a competing term. One term pushes for higher variance, the other resists large norms. The solution sits at the equilibrium between them.</p>
 <div class="callout callout-style-default callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -403,12 +415,12 @@ A word on LS-SVM
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-2" class="callout-2-contents callout-collapse collapse">
+<div id="callout-3" class="callout-3-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>Classical SVM separates positive and negative points with a margin: a buffer zone no point should enter.</p>
 <p>Perfect separation is rare, so the soft margin variant lets some points violate the zone, penalized by slack variables. But inequality constraints remain (each point must be on one side or the other), solved via Quadratic Programming, which doesn’t scale well.</p>
 <p>Suykens’ insight: if we’re allowing violations anyway, why keep the inequalities? Replace them with equalities, where the margin boundaries become target values. Points can miss the target, and we penalize the squared error.</p>
-<p>KKT conditions reduce to a linear system. Fast to solve, easy to extend. The “Least Squares” in LS-SVM comes from this squared error formulation.</p>
+<p>KKT (Karush-Kuhn-Tucker) conditions reduce to a linear system. Fast to solve, easy to extend. The “Least Squares” in LS-SVM comes from this squared error formulation.</p>
 <p>For a full treatment, see Suykens et al., <a href="https://www.worldscientific.com/worldscibooks/10.1142/5089"><em>Least Squares Support Vector Machines</em></a> (World Scientific, 2002).</p>
 </div>
 </div>
@@ -489,11 +501,11 @@ Notation: two meanings of λ
 </div>
 <p><strong>What do we observe?</strong></p>
 <ul>
-<li><strong>(a) γ = 0.05</strong>: Regularization dominates. The objective decreases outward everywhere: maximum at w = 0. The objective is concave.</li>
-<li><strong>(b) γ = 1/9</strong>: First critical value. A <strong>ridge</strong> emerges along one direction: flat radially, curving down elsewhere.</li>
+<li><strong>(a) <span class="math inline">\(\gamma\)</span> = 0.05</strong>: Regularization dominates. The objective decreases outward everywhere: maximum at w = 0. The objective is concave.</li>
+<li><strong>(b) <span class="math inline">\(\gamma\)</span> = 1/9</strong>: First critical value. A <strong>ridge</strong> emerges along one direction: flat radially, curving down elsewhere.</li>
 <li><strong>(c,d) Between critical values</strong>: A saddle at the origin. The objective curves upward in some directions and downward in others.</li>
-<li><strong>(e) γ = 1/3</strong>: Second critical value. A <strong>thalweg</strong> (valley floor) emerges along a perpendicular direction: flat radially, curving up elsewhere.</li>
-<li><strong>(f) γ = 0.50</strong>: Variance dominates. The objective increases outward everywhere: minimum at w = 0. The objective is convex.</li>
+<li><strong>(e) <span class="math inline">\(\gamma\)</span> = 1/3</strong>: Second critical value. A <strong>thalweg</strong> (valley floor) emerges along a perpendicular direction: flat radially, curving up elsewhere.</li>
+<li><strong>(f) <span class="math inline">\(\gamma\)</span> = 0.50</strong>: Variance dominates. The objective increases outward everywhere: minimum at w = 0. The objective is convex.</li>
 </ul>
 <p>Only at <span class="math inline">\(\gamma = 1/\lambda_i\)</span> do non-trivial equilibria exist. At these critical values, variance and regularization exactly balance, and the objective along the balanced direction is <strong>zero</strong>.</p>
 <section id="maximization-vs.-equilibrium" class="level4">
@@ -518,12 +530,12 @@ Looking ahead
 </div>
 </section>
 </section>
-<section id="why-γ-controls-the-landscape" class="level3">
-<h3 class="anchored" data-anchor-id="why-γ-controls-the-landscape">Why γ Controls the Landscape</h3>
+<section id="why-gamma-controls-the-landscape" class="level3">
+<h3 class="anchored" data-anchor-id="why-gamma-controls-the-landscape">Why <span class="math inline">\(\gamma\)</span> Controls the Landscape</h3>
 <p>The landscape’s transitions from concave to saddle to convex have a clean algebraic explanation. Substituting <span class="math inline">\(e_k = w^T x_k\)</span> directly into the objective gives a quadratic form:</p>
 <p><span class="math display">\[J(w) = w^T \left(\frac{\gamma}{2} X^T X - \frac{1}{2} I\right) w\]</span></p>
 <div class="callout callout-style-default callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-5-contents" aria-controls="callout-5" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-6-contents" aria-controls="callout-6" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -532,7 +544,7 @@ Deriving the quadratic form
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-5" class="callout-5-contents callout-collapse collapse">
+<div id="callout-6" class="callout-6-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>Starting from the objective:</p>
 <p><span class="math display">\[J(w) = \frac{\gamma}{2} \sum_{k=1}^N (w^T x_k)^2 - \frac{1}{2} w^T w\]</span></p>
@@ -547,42 +559,47 @@ Deriving the quadratic form
 <p><span class="math display">\[H = \gamma X^T X - I\]</span></p>
 <p>Its eigenvalues are <span class="math inline">\(\gamma \lambda_i - 1\)</span>, where <span class="math inline">\(\lambda_i\)</span> are the eigenvalues of <span class="math inline">\(X^T X\)</span>. The sign determines curvature:</p>
 <table class="caption-top table">
+<colgroup>
+<col style="width: 24%">
+<col style="width: 56%">
+<col style="width: 18%">
+</colgroup>
 <thead>
 <tr class="header">
-<th>γ range</th>
+<th><span class="math inline">\(\gamma\)</span> range</th>
 <th>Hessian eigenvalues</th>
 <th>Shape</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>γ &lt; 1/λ₁</td>
+<td><span class="math inline">\(\gamma &lt; 1/\lambda_1\)</span></td>
 <td>both negative</td>
 <td>negative definite (concave)</td>
 </tr>
 <tr class="even">
-<td>γ = 1/λ₁</td>
+<td><span class="math inline">\(\gamma = 1/\lambda_1\)</span></td>
 <td>one zero, one negative</td>
 <td>negative semi-definite (ridge)</td>
 </tr>
 <tr class="odd">
-<td>1/λ₁ &lt; γ &lt; 1/λ₂</td>
+<td><span class="math inline">\(1/\lambda_1 &lt; \gamma &lt; 1/\lambda_2\)</span></td>
 <td>one positive, one negative</td>
 <td>indefinite (saddle)</td>
 </tr>
 <tr class="even">
-<td>γ = 1/λ₂</td>
+<td><span class="math inline">\(\gamma = 1/\lambda_2\)</span></td>
 <td>one positive, one zero</td>
 <td>positive semi-definite (thalweg)</td>
 </tr>
 <tr class="odd">
-<td>γ &gt; 1/λ₂</td>
+<td><span class="math inline">\(\gamma &gt; 1/\lambda_2\)</span></td>
 <td>both positive</td>
 <td>positive definite (convex)</td>
 </tr>
 </tbody>
 </table>
-<p>The parameter γ smoothly transitions the objective through all these regimes. The critical values γ = 1/λᵢ are where the Hessian becomes <strong>singular</strong>, creating those ridges and thalwegs that extend to infinity.</p>
+<p>The parameter <span class="math inline">\(\gamma\)</span> smoothly transitions the objective through all these regimes. The critical values <span class="math inline">\(\gamma = 1/\lambda_i\)</span> are where the Hessian becomes <strong>singular</strong>, creating those ridges and thalwegs that extend to infinity.</p>
 <p>In classical PCA, the quadratic form <span class="math inline">\(w^T C w\)</span> is positive semi-definite: variance is never negative, and the hard constraint <span class="math inline">\(\|w\|^2 = 1\)</span> simply selects a point on the unit circle. The geometry is fixed.</p>
 <p>The LS-SVM formulation replaces that rigid constraint with a “tunable knob” γ. The effective quadratic form becomes <span class="math inline">\(w^T(\frac{\gamma}{2} X^T X - \frac{1}{2}I)w\)</span>, whose curvature now <em>depends on γ</em>. Too small, and regularization dominates: the objective is concave, everything collapses to <span class="math inline">\(w = 0\)</span>. Too large, and variance dominates: the objective is convex, <span class="math inline">\(w\)</span> escapes to infinity. Both extremes are useless.</p>
 <p>But at the critical values <span class="math inline">\(\gamma = 1/\lambda_i\)</span>, the two forces exactly balance along one direction. A ridge or thalweg appears, extending to infinity, flat radially, curving away on either side. These semi-definite directions are the only ones where the competing forces reach equilibrium. They point exactly along the eigenvectors.</p>

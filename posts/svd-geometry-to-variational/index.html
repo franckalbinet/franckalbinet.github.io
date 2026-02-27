@@ -402,7 +402,11 @@ Quick dimension check
 </div>
 <p>Consider again our 2×3 matrix <span class="math inline">\(A\)</span>. It takes 3D vectors as input and produces 2D vectors as output. We’re squashing 3D down to 2D. Something must get lost.</p>
 <p><strong>Where do the inputs live?</strong></p>
-<p>Look at the rows of <span class="math inline">\(A\)</span>: they are two vectors in <span class="math inline">\(\mathbb{R}^3\)</span>: - Row 1: <span class="math inline">\((1, 2, 0)\)</span> - Row 2: <span class="math inline">\((0, 1, 2)\)</span></p>
+<p>Look at the rows of <span class="math inline">\(A\)</span>: they are two vectors in <span class="math inline">\(\mathbb{R}^3\)</span>:</p>
+<ul>
+<li>Row 1: <span class="math inline">\((1, 2, 0)\)</span></li>
+<li>Row 2: <span class="math inline">\((0, 1, 2)\)</span></li>
+</ul>
 <p>These two vectors span a plane in 3D. This plane is the <strong>row space</strong> as shown in <a href="#fig-decomposition" class="quarto-xref">Figure&nbsp;1</a></p>
 <p>Now imagine feeding a 3D vector <span class="math inline">\(x\)</span> into <span class="math inline">\(A\)</span>. Three things can happen:</p>
 <ol type="1">
@@ -749,7 +753,7 @@ Why isn’t the bilinear form convex?
 </ul>
 <p>From <span class="math inline">\(\lambda_1 + \lambda_2 = 0\)</span> we get <span class="math inline">\(\lambda_2 = -\lambda_1\)</span>. Substituting into <span class="math inline">\(\lambda_1 \lambda_2 = -1\)</span> gives <span class="math inline">\(-\lambda_1^2 = -1\)</span>, so <span class="math inline">\(\lambda_1 = \pm 1\)</span>. The eigenvalues are <span class="math inline">\(\lambda = +1\)</span> and <span class="math inline">\(\lambda = -1\)</span>.</p>
 <p>One positive, one negative: the Hessian is <em>indefinite</em>. This means <span class="math inline">\(f(x,y) = xy\)</span> is a saddle surface: curving upward in some directions, downward in others. Not convex, not concave.</p>
-<p><em>Intuition: <span class="math inline">\(v^T H v\)</span> gives the curvature (second derivative) in direction <span class="math inline">\(v\)</span>. Positive definite means positive curvature in every direction (a bowl). Indefinite means some directions curve up, others down—a saddle.</em></p>
+<p><em>Intuition: <span class="math inline">\(v^T H v\)</span> gives the curvature (second derivative) in direction <span class="math inline">\(v\)</span>. Positive definite means positive curvature in every direction (a bowl). Indefinite means some directions curve up, others down (a saddle).</em></p>
 <p>The general bilinear form <span class="math inline">\(u^T A v\)</span> inherits this structure. No matter what <span class="math inline">\(A\)</span> is, mixing input and output variables creates saddle geometry.</p>
 </div>
 </div>
@@ -769,7 +773,7 @@ Constrained Optimization Prerequisites
 <p>We’ll use Lagrange multipliers to solve constrained optimization. The core idea: move constraints into the objective function as penalty terms. Each constraint gets a multiplier representing the “price” for violating it. This converts a constrained problem into an unconstrained one we can solve with calculus.</p>
 <p>If you need a refresher:</p>
 <ul>
-<li><p><strong>For intuition</strong>: The <a href="https://www.youtube.com/watch?v=AM6BY4btj-M">Visually Explained</a> series builds geometric understanding of convex optimization, Lagrangians, and KKT conditions</p></li>
+<li><p><strong>For intuition</strong>: The <a href="https://www.youtube.com/watch?v=AM6BY4btj-M">Visually Explained</a> series builds geometric understanding of convex optimization, Lagrangians, and KKT conditions (Karush-Kuhn-Tucker: taking the partial derivatives of the Lagrangian and setting them to zero)</p></li>
 <li><p><strong>For depth</strong>: Boyd &amp; Vandenberghe’s <a href="https://stanford.edu/~boyd/cvxbook/">Convex Optimization</a> is the standard reference (free PDF available, and Boyd’s Stanford lectures are online)</p></li>
 </ul>
 </div>
