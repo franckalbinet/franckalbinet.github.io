@@ -196,6 +196,7 @@ window.Quarto = {
                 <div class="quarto-category">LLMs</div>
                 <div class="quarto-category">Kernel Methods</div>
                 <div class="quarto-category">LS-SVM</div>
+                <div class="quarto-category">Primal Attention</div>
               </div>
                   </div>
   </div>
@@ -254,6 +255,9 @@ window.Quarto = {
 
 
 
+<div class="series-label">
+<p>Part 2 of 4 · Primal Attention Series</p>
+</div>
 <p><a href="https://fr.anckalbi.net/posts/svd-geometry-to-variational">Part 1</a> derived SVD from the classical variational principle: maximizing <span class="math inline">\(u^T A v\)</span> with hard constraints on both <span class="math inline">\(u\)</span> and <span class="math inline">\(v\)</span>. Johan Suykens’ LS-SVM reformulation replaces rigid constraints with <strong>competing forces</strong>.</p>
 <p>Before tackling <a href="https://www.sciencedirect.com/science/article/pii/S1063520315001360">SVD in this new framework</a>, we start with PCA: the simplest setting where two opposing terms (variance and regularization) find balance at <strong>discrete, quantized points</strong>. The intuition we build here, especially through a toy example with its revealing polar landscapes, carries directly into the SVD case.</p>
 <p>Classical PCA begins with a single question: which direction captures the most variance?</p>

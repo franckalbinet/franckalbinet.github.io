@@ -1,0 +1,929 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.6.42">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Franck Albinet">
+<meta name="dcterms.date" content="2026-03-21">
+<meta name="description" content="One matrix, two data sources, and a compatibility condition that quietly foreshadows attention">
+
+<title>The Seed of Attention: SVD Through Compatible Feature Maps – FR.ANCKALBI.NET</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-2f5df379a58b258e96c21c0638c20c03.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap-d8da95f774daf845fa96da8c9b52f128.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="../../styles.css">
+</head>
+
+<body class="nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top quarto-banner">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">FR.ANCKALBI.NET</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../index.html"> 
+<span class="menu-text">Blog</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../about.html"> 
+<span class="menu-text">About</span></a>
+  </li>  
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/franckalbinet"> <i class="bi bi-github" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://www.linkedin.com/in/franckalbinet"> <i class="bi bi-linkedin" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">The Seed of Attention: SVD Through Compatible Feature Maps</h1>
+                  <div>
+        <div class="description">
+          One matrix, two data sources, and a compatibility condition that quietly foreshadows attention
+        </div>
+      </div>
+                          <div class="quarto-categories">
+                <div class="quarto-category">Linear Algebra</div>
+                <div class="quarto-category">LLMs</div>
+                <div class="quarto-category">Kernel Methods</div>
+                <div class="quarto-category">Sustainable AI</div>
+                <div class="quarto-category">Primal Attention</div>
+              </div>
+                  </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta">
+
+      <div>
+      <div class="quarto-title-meta-heading">Author</div>
+      <div class="quarto-title-meta-contents">
+               <p>Franck Albinet </p>
+            </div>
+    </div>
+      
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">March 21, 2026</p>
+      </div>
+    </div>
+    
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction">Introduction</a></li>
+  <li><a href="#rows-and-columns-as-two-datasets" id="toc-rows-and-columns-as-two-datasets" class="nav-link" data-scroll-target="#rows-and-columns-as-two-datasets">Rows and Columns as Two Datasets</a></li>
+  <li><a href="#coupling-row-and-column-directions" id="toc-coupling-row-and-column-directions" class="nav-link" data-scroll-target="#coupling-row-and-column-directions">Coupling Row and Column Directions</a></li>
+  <li><a href="#compatible-feature-maps" id="toc-compatible-feature-maps" class="nav-link" data-scroll-target="#compatible-feature-maps">Compatible Feature Maps</a></li>
+  <li><a href="#the-shifted-eigenvalue-problem" id="toc-the-shifted-eigenvalue-problem" class="nav-link" data-scroll-target="#the-shifted-eigenvalue-problem">The Shifted Eigenvalue Problem</a></li>
+  <li><a href="#finding-the-compatibility-matrix" id="toc-finding-the-compatibility-matrix" class="nav-link" data-scroll-target="#finding-the-compatibility-matrix">Finding the Compatibility Matrix</a></li>
+  <li><a href="#what-did-we-just-build" id="toc-what-did-we-just-build" class="nav-link" data-scroll-target="#what-did-we-just-build">What Did We Just Build?</a></li>
+  <li><a href="#why-bother-three-payoffs" id="toc-why-bother-three-payoffs" class="nav-link" data-scroll-target="#why-bother-three-payoffs">Why Bother? Three Payoffs</a></li>
+  <li><a href="#the-seed-of-attention" id="toc-the-seed-of-attention" class="nav-link" data-scroll-target="#the-seed-of-attention">The Seed of Attention</a></li>
+  <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion">Conclusion</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content quarto-banner-title-block" id="quarto-document-content">
+
+
+
+
+
+<div class="series-label">
+<p>Part 3 of 4 · Primal Attention Series</p>
+</div>
+<section id="introduction" class="level2">
+<h2 class="anchored" data-anchor-id="introduction">Introduction</h2>
+<p>In <a href="https://fr.anckalbi.net/posts/svd-geometry-to-variational/">Part 1</a>, we started with what a matrix does to space, identified its four subspaces (column space, row space, and their orthogonal complements), and arrived at SVD as the solution to maximizing <span class="math inline">\(u^TAv\)</span> under norm constraints. In <a href="https://fr.anckalbi.net/posts/ls-svm-kernel-pca/">Part 2</a>, we shifted perspective. Instead of hard constraints, we let two forces compete in an LS-SVM objective: variance maximization against norm penalization. The parameter <span class="math inline">\(\gamma\)</span> controls the shape of the LS-SVM loss landscape, and for specific quantized values where <span class="math inline">\(1/\gamma\)</span> equals an eigenvalue, the objective at the stationary point is exactly zero.</p>
+<p>Part 2 dealt with a single dataset and a single weight vector <span class="math inline">\(w\)</span>. The covariance matrix was square and symmetric. But SVD is about rectangular matrices, and rectangular matrices connect two different spaces. A <span class="math inline">\(2 \times 3\)</span> matrix has row vectors in <span class="math inline">\(\mathbb{R}^3\)</span> and column vectors in <span class="math inline">\(\mathbb{R}^2\)</span>. How do we bring the LS-SVM competing-forces framework to bear when there are two data sources that don’t even share the same dimension?</p>
+<p>That’s the question <a href="https://www.esat.kuleuven.be/sista/members/suykens.html">Johan Suykens</a> answered in 2016 with a short, dense paper: <a href="https://www.sciencedirect.com/science/article/pii/S1063520315001360"><em>SVD Revisited: A New Variational Principle, Compatible Feature Maps and Nonlinear Extensions</em></a>. Treat the <strong>matrix as two datasets</strong> (one from its rows, one from its columns), introduce a <strong>compatibility matrix</strong> <span class="math inline">\(C\)</span> to reconcile their dimensions, and let the same LS-SVM machinery do the rest. The <strong>shifted eigenvalue problem</strong> falls out of the KKT conditions: the same block structure from Part 1, whose eigenvalues <span class="math inline">\(\pm\sigma_i\)</span> recover the full SVD.</p>
+<p>This paper appeared one year before <a href="https://arxiv.org/abs/1706.03762"><em>Attention Is All You Need</em></a>. That timing matters. The structure it shares with self-attention is striking: two data sources are passed through feature maps, their interactions form a kernel matrix, and the output vectors are linear combinations of Lagrange multipliers weighted by that matrix. Replace “Lagrange multipliers” with “values” and “kernel matrix” with “attention map,” and you’re looking at the same architecture. A later paper, <a href="https://arxiv.org/abs/2305.19798"><em>Primal Attention</em></a>, makes that connection explicit. Our goal across this series is to build the path there, one piece at a time. This post is the pivot.</p>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Notation convention
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>In Parts 1 and 2, following <a href="https://www.youtube.com/watch?v=QVKj3LADCnA&amp;list=PL49CF3715CB9EF31D">Strang’s notation</a>, we used <span class="math inline">\(m \times n\)</span> for a matrix with <span class="math inline">\(m\)</span> rows and <span class="math inline">\(n\)</span> columns. Suykens’ paper reverses the convention: <span class="math inline">\(N\)</span> rows and <span class="math inline">\(M\)</span> columns. Throughout this post we adopt the same convention to stay consistent with the paper.</p>
+</div>
+</div>
+</section>
+<section id="rows-and-columns-as-two-datasets" class="level2">
+<h2 class="anchored" data-anchor-id="rows-and-columns-as-two-datasets">Rows and Columns as Two Datasets</h2>
+<p>In Part 1 we saw that a matrix <span class="math inline">\(A \in \mathbb{R}^{N \times M}\)</span> organizes space into four fundamental subspaces: the row space and null space in <span class="math inline">\(\mathbb{R}^M\)</span>, the column space and left null space in <span class="math inline">\(\mathbb{R}^N\)</span>. SVD finds orthonormal bases for all four simultaneously. The right singular vectors <span class="math inline">\(v_i\)</span> span the row space, the left singular vectors <span class="math inline">\(u_i\)</span> span the column space, and the singular values <span class="math inline">\(\sigma_i\)</span> measure how strongly each row-space direction couples to its column-space partner.</p>
+<p>So SVD is, at its core, a story about the relationship between rows and columns. Two different spaces, linked through <span class="math inline">\(A\)</span>. The first move is to make that duality explicit: treat the rows and columns of <span class="math inline">\(A\)</span> as two separate datasets.</p>
+<p>For a matrix <span class="math inline">\(A \in \mathbb{R}^{N \times M}\)</span>, define two sets of data points:</p>
+<p><span class="math display">\[x_i = A^T \varepsilon_i, \quad i = 1, \ldots, N\]</span> <span class="math display">\[z_j = A \varepsilon_j, \quad j = 1, \ldots, M\]</span></p>
+<p>where <span class="math inline">\(\varepsilon_i\)</span> and <span class="math inline">\(\varepsilon_j\)</span> are standard basis vectors of <span class="math inline">\(\mathbb{R}^N\)</span> and <span class="math inline">\(\mathbb{R}^M\)</span> respectively. So <span class="math inline">\(A^T\varepsilon_i\)</span> simply extracts the <span class="math inline">\(i\)</span>-th row of <span class="math inline">\(A\)</span> as a column vector, and <span class="math inline">\(A\varepsilon_j\)</span> extracts the <span class="math inline">\(j\)</span>-th column.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The <span class="math inline">\(\varepsilon\)</span> notation is just a compact way to say: read off the rows and columns of A.</p>
+</div>
+</div>
+<p>Returning to our <span class="math inline">\(2 \times 3\)</span> toy matrix:</p>
+<p><span class="math display">\[A = \begin{bmatrix} 1 &amp; 2 &amp; 0 \\ 0 &amp; 1 &amp; 2 \end{bmatrix}\]</span></p>
+<p>Here <span class="math inline">\(N = 2\)</span> and <span class="math inline">\(M = 3\)</span>. The standard basis vectors <span class="math inline">\(\varepsilon_1, \varepsilon_2 \in \mathbb{R}^2\)</span>:</p>
+<p><span class="math display">\[\varepsilon_1 = \begin{bmatrix}1\\0\end{bmatrix}, \quad \varepsilon_2 = \begin{bmatrix}0\\1\end{bmatrix}\]</span></p>
+<p>and <span class="math inline">\(\varepsilon_1, \varepsilon_2, \varepsilon_3 \in \mathbb{R}^3\)</span>:</p>
+<p><span class="math display">\[\varepsilon_1 = \begin{bmatrix}1\\0\\0\end{bmatrix}, \quad \varepsilon_2 = \begin{bmatrix}0\\1\\0\end{bmatrix}, \quad \varepsilon_3 = \begin{bmatrix}0\\0\\1\end{bmatrix}\]</span></p>
+<p>give:</p>
+<p><span class="math display">\[x_1 = A^T\varepsilon_1 = \begin{bmatrix}1\\2\\0\end{bmatrix}, \quad x_2 = A^T\varepsilon_2 = \begin{bmatrix}0\\1\\2\end{bmatrix}\]</span></p>
+<p><span class="math display">\[z_1 = A\varepsilon_1 = \begin{bmatrix}1\\0\end{bmatrix}, \quad z_2 = A\varepsilon_2 = \begin{bmatrix}2\\1\end{bmatrix}, \quad z_3 = A\varepsilon_3 = \begin{bmatrix}0\\2\end{bmatrix}\]</span></p>
+<p>The <span class="math inline">\(x_i\)</span> are the rows of <span class="math inline">\(A\)</span>, living in <span class="math inline">\(\mathbb{R}^3\)</span>. The <span class="math inline">\(z_j\)</span> are the columns, living in <span class="math inline">\(\mathbb{R}^2\)</span>. Two point clouds in two different spaces.</p>
+</section>
+<section id="coupling-row-and-column-directions" class="level2">
+<h2 class="anchored" data-anchor-id="coupling-row-and-column-directions">Coupling Row and Column Directions</h2>
+<p>In Part 2, the LS-SVM formulation of PCA balanced two competing forces:</p>
+<p><span class="math display">\[\min_{w, e} -w^Tw + \tfrac{1}{2}\gamma\sum_{i=1}^{N} e_i^2 \quad \text{subject to} \quad e_i = w^Tx_i\]</span></p>
+<p>The first term penalizes the norm of <span class="math inline">\(w\)</span>, preventing the trivial solution of expanding <span class="math inline">\(w\)</span> indefinitely to maximize variance. The second measures the projections of data points onto <span class="math inline">\(w\)</span>. Neither term can be read in isolation; <span class="math inline">\(\gamma\)</span> controls the equilibrium between them.</p>
+<p>Now we have two datasets: rows <span class="math inline">\(x_i \in \mathbb{R}^M\)</span> and columns <span class="math inline">\(z_j \in \mathbb{R}^N\)</span>. Each gets its own weight vector and its own projection errors. The self-coupling <span class="math inline">\(-w^Tw\)</span> becomes a cross-coupling <span class="math inline">\(-w^Tv\)</span> between the two principal directions:</p>
+<p><span class="math display">\[\min_{w,v,e,r} J(w, v, e, r) = -w^Tv + \tfrac{1}{2}\gamma\sum_{i=1}^{N} e_i^2 + \tfrac{1}{2}\gamma\sum_{j=1}^{M} r_j^2\]</span></p>
+<p>subject to <span class="math inline">\(\quad e_i = w^Tx_i, \quad r_j = v^Tz_j\)</span></p>
+<p>But there’s an immediate problem. The <span class="math inline">\(x_i\)</span> live in <span class="math inline">\(\mathbb{R}^M\)</span>, so <span class="math inline">\(w\)</span> must be in <span class="math inline">\(\mathbb{R}^M\)</span> to compute <span class="math inline">\(w^Tx_i\)</span>. The <span class="math inline">\(z_j\)</span> live in <span class="math inline">\(\mathbb{R}^N\)</span>, so <span class="math inline">\(v\)</span> must be in <span class="math inline">\(\mathbb{R}^N\)</span>. For our toy matrix, that’s <span class="math inline">\(w \in \mathbb{R}^3\)</span> and <span class="math inline">\(v \in \mathbb{R}^2\)</span>. The coupling term <span class="math inline">\(w^Tv\)</span> is not even defined.</p>
+</section>
+<section id="compatible-feature-maps" class="level2">
+<h2 class="anchored" data-anchor-id="compatible-feature-maps">Compatible Feature Maps</h2>
+<p>We need a way to bring <span class="math inline">\(w\)</span> and <span class="math inline">\(v\)</span> into the same space. Introduce a matrix <span class="math inline">\(C \in \mathbb{R}^{M \times N}\)</span> and define feature maps</p>
+<p><span class="math display">\[\varphi(x_i) = C^Tx_i \in \mathbb{R}^N, \qquad \psi(z_j) = z_j \in \mathbb{R}^N\]</span></p>
+<p>The map <span class="math inline">\(\varphi\)</span> projects the row data from <span class="math inline">\(\mathbb{R}^M\)</span> down to <span class="math inline">\(\mathbb{R}^N\)</span>, while <span class="math inline">\(\psi\)</span> is simply the identity map: the column data stays untouched in <span class="math inline">\(\mathbb{R}^N\)</span>. Now both feature maps land in <span class="math inline">\(\mathbb{R}^N\)</span>, both weight vectors <span class="math inline">\(w, v\)</span> live in <span class="math inline">\(\mathbb{R}^N\)</span>, and the coupling term <span class="math inline">\(w^Tv\)</span> makes sense. The constraints become:</p>
+<p><span class="math display">\[e_i = w^T\varphi(x_i) = w^TC^Tx_i, \qquad r_j = v^T\psi(z_j) = v^Tz_j\]</span></p>
+<p>For our toy matrix: <span class="math inline">\(C\)</span> is <span class="math inline">\(3 \times 2\)</span>, mapping the row vectors from <span class="math inline">\(\mathbb{R}^3\)</span> to <span class="math inline">\(\mathbb{R}^2\)</span>. Both <span class="math inline">\(w\)</span> and <span class="math inline">\(v\)</span> are now in <span class="math inline">\(\mathbb{R}^2\)</span>.</p>
+<p>But what should <span class="math inline">\(C\)</span> be? We can’t just pick any matrix. The <strong>KKT conditions will tell us</strong>.</p>
+</section>
+<section id="the-shifted-eigenvalue-problem" class="level2">
+<h2 class="anchored" data-anchor-id="the-shifted-eigenvalue-problem">The Shifted Eigenvalue Problem</h2>
+<p>The Lagrangian and KKT conditions follow the same pattern as Parts 1 and 2. Setting all partial derivatives to zero and eliminating <span class="math inline">\(w\)</span>, <span class="math inline">\(v\)</span>, <span class="math inline">\(e\)</span>, <span class="math inline">\(r\)</span> (details in the callout below), we arrive at:</p>
+<p><span class="math display">\[\left[\varphi(x_i)^T\psi(z_j)\right][\beta] = [\alpha]\tilde{\Lambda}\]</span> <span class="math display">\[\left[\psi(z_j)^T\varphi(x_i)\right][\alpha] = [\beta]\tilde{\Lambda}\]</span></p>
+<p>where <span class="math inline">\([\alpha]\)</span> and <span class="math inline">\([\beta]\)</span> collect the Lagrange multiplier vectors as columns, and <span class="math inline">\(\tilde{\Lambda} = \text{diag}(\lambda_1, \ldots, \lambda_r)\)</span> with <span class="math inline">\(\lambda_l = 1/\gamma_l\)</span>.</p>
+<p>The matrix <span class="math inline">\(\left[\varphi(x_i)^T\psi(z_j)\right]\)</span> is <span class="math inline">\(N \times M\)</span>, rectangular and unsymmetric: it measures inner products between two <em>different</em> feature maps applied to two different datasets. For our <span class="math inline">\(2 \times 3\)</span> matrix, this is a <span class="math inline">\(2 \times 3\)</span> kernel matrix: 2 row vectors matched against 3 column vectors, each pair compared through their feature maps.</p>
+<p>As in Part 2, the KKT conditions admit one stationary point per eigenvalue. The index <span class="math inline">\(l = 1, \ldots, r\)</span> runs over these solutions, and each <span class="math inline">\(\lambda_l\)</span> is the inverse of one of the “quantized” equilibrium values of <span class="math inline">\(\gamma\)</span>. If the algebra above looks cryptic, the callout below works through every step.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Full KKT derivation
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-3" class="callout-3-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>The Lagrangian is:</p>
+<p><span class="math display">\[\mathscr{L} = -w^Tv + \tfrac{1}{2}\gamma\sum_i e_i^2 + \tfrac{1}{2}\gamma\sum_j r_j^2 - \sum_i \alpha_i(e_i - w^T\varphi(x_i)) - \sum_j \beta_j(r_j - v^T\psi(z_j))\]</span></p>
+<p>Setting partial derivatives to zero:</p>
+<p><span class="math display">\[\frac{\partial\mathscr{L}}{\partial w} = 0 \Rightarrow v = \sum_i \alpha_i\varphi(x_i)  \quad \text{(1)}\]</span></p>
+<p><span class="math display">\[\frac{\partial\mathscr{L}}{\partial v} = 0 \Rightarrow w = \sum_j \beta_j\psi(z_j) \quad \text{(2)}\]</span></p>
+<p><span class="math display">\[\frac{\partial\mathscr{L}}{\partial e_i} = 0 \Rightarrow \alpha_i = \gamma e_i \quad \text{(3)}\]</span></p>
+<p>For instance, <span class="math inline">\(\frac{\partial \mathscr{L}}{\partial e_1} = \gamma e_1 - \alpha_1 = 0\)</span>, because every other <span class="math inline">\(e_i^2\)</span> and <span class="math inline">\(\alpha_i e_i\)</span> term vanishes when differentiating with respect to <span class="math inline">\(e_1\)</span>. The same holds for each index independently.</p>
+<p><span class="math display">\[\frac{\partial\mathscr{L}}{\partial r_j} = 0 \Rightarrow \beta_j = \gamma r_j \quad \text{(4)}\]</span></p>
+<p><span class="math display">\[\frac{\partial\mathscr{L}}{\partial \alpha_i} = 0 \Rightarrow e_i = w^T\varphi(x_i) \quad \text{(5)}\]</span></p>
+<p><span class="math display">\[\frac{\partial\mathscr{L}}{\partial \beta_j} = 0 \Rightarrow r_j = v^T\psi(z_j) \quad \text{(6)}\]</span></p>
+<p><strong>To eliminate</strong> <span class="math inline">\(w\)</span>, <span class="math inline">\(v\)</span>, <span class="math inline">\(e\)</span>, <span class="math inline">\(r\)</span>, substitute the first four into the last two. For the <span class="math inline">\(e_i\)</span> constraints: <span class="math inline">\(e_i = w^T\varphi(x_i)\)</span> with <span class="math inline">\(w = \sum_j \beta_j\psi(z_j)\)</span> and <span class="math inline">\(\alpha_i = \gamma e_i\)</span> gives:</p>
+<p><span class="math display">\[\lambda\alpha_i = \sum_j \beta_j\psi(z_j)^T\varphi(x_i)\]</span></p>
+<p>For our toy matrix (<span class="math inline">\(N=2\)</span>, <span class="math inline">\(M=3\)</span>), this is two equations:</p>
+<p><span class="math display">\[\lambda\alpha_1 = \beta_1\psi(z_1)^T\varphi(x_1) + \beta_2\psi(z_2)^T\varphi(x_1) + \beta_3\psi(z_3)^T\varphi(x_1)\]</span></p>
+<p><span class="math display">\[\lambda\alpha_2 = \beta_1\psi(z_1)^T\varphi(x_2) + \beta_2\psi(z_2)^T\varphi(x_2) + \beta_3\psi(z_3)^T\varphi(x_2)\]</span></p>
+<p><strong>To assemble this into a matrix equation</strong>, note that each equation sums <span class="math inline">\(\beta_j\)</span> times the scalar <span class="math inline">\(\psi(z_j)^T\varphi(x_i)\)</span>. Since an inner product is a scalar, <span class="math inline">\(\psi(z_j)^T\varphi(x_i) = \varphi(x_i)^T\psi(z_j)\)</span>. We use the flipped form when assembling the matrix so the row index <span class="math inline">\(i\)</span> appears first and the column index <span class="math inline">\(j\)</span> second:</p>
+<p><span class="math display">\[\lambda \begin{bmatrix} \alpha_1 \\ \alpha_2 \end{bmatrix} = \begin{bmatrix} \varphi(x_1)^T\psi(z_1) &amp; \varphi(x_1)^T\psi(z_2) &amp; \varphi(x_1)^T\psi(z_3) \\ \varphi(x_2)^T\psi(z_1) &amp; \varphi(x_2)^T\psi(z_2) &amp; \varphi(x_2)^T\psi(z_3) \end{bmatrix} \begin{bmatrix} \beta_1 \\ \beta_2 \\ \beta_3 \end{bmatrix}\]</span></p>
+<p>or compactly: <span class="math inline">\(\left[\varphi(x_i)^T\psi(z_j)\right]\beta = \lambda\alpha\)</span>, a <span class="math inline">\(2 \times 3\)</span> matrix (one row per <span class="math inline">\(x_i\)</span>, one column per <span class="math inline">\(z_j\)</span>).</p>
+<p>Similarly, the three equations for <span class="math inline">\(\beta_1, \beta_2, \beta_3\)</span>:</p>
+<p><span class="math display">\[\lambda \begin{bmatrix} \beta_1 \\ \beta_2 \\ \beta_3 \end{bmatrix} = \begin{bmatrix} \psi(z_1)^T\varphi(x_1) &amp; \psi(z_1)^T\varphi(x_2) \\ \psi(z_2)^T\varphi(x_1) &amp; \psi(z_2)^T\varphi(x_2) \\ \psi(z_3)^T\varphi(x_1) &amp; \psi(z_3)^T\varphi(x_2) \end{bmatrix} \begin{bmatrix} \alpha_1 \\ \alpha_2 \end{bmatrix}\]</span></p>
+<p>or: <span class="math inline">\(\left[\psi(z_j)^T\varphi(x_i)\right]\alpha = \lambda\beta\)</span>, a <span class="math inline">\(3 \times 2\)</span> matrix, the transpose of the first.</p>
+<p>Each non-zero <span class="math inline">\(\lambda\)</span> gives a pair <span class="math inline">\((\alpha, \beta)\)</span>. Stacking all <span class="math inline">\(r\)</span> solutions as columns into matrices <span class="math inline">\([\alpha] \in \mathbb{R}^{2 \times r}\)</span> and <span class="math inline">\([\beta] \in \mathbb{R}^{3 \times r}\)</span>, and the corresponding eigenvalues into <span class="math inline">\(\tilde{\Lambda} = \text{diag}(\lambda_1, \ldots, \lambda_r)\)</span>:</p>
+<p><span class="math display">\[\left[\varphi(x_i)^T\psi(z_j)\right][\beta] = [\alpha]\tilde{\Lambda}\]</span> <span class="math display">\[\left[\psi(z_j)^T\varphi(x_i)\right][\alpha] = [\beta]\tilde{\Lambda}\]</span></p>
+</div>
+</div>
+</div>
+<p>Substituting the feature maps <span class="math inline">\(\varphi(x_i) = C^Tx_i = C^TA^T\varepsilon_i\)</span> and <span class="math inline">\(\psi(z_j) = z_j = A\varepsilon_j\)</span> into an entry:</p>
+<p><span class="math display">\[\varphi(x_i)^T\psi(z_j) = (C^TA^T\varepsilon_i)^T(A\varepsilon_j) = \varepsilon_i^TACA\varepsilon_j\]</span></p>
+<p>where the middle step uses <span class="math inline">\((ABC)^T = C^TB^TA^T\)</span>.</p>
+<p>If <span class="math inline">\(ACA = A\)</span>, this is simply <span class="math inline">\(A_{ij}\)</span>, and the system becomes the shifted eigenvalue problem we derived in <a href="https://fr.anckalbi.net/posts/svd-geometry-to-variational/">Part 1</a>.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-4-contents" aria-controls="callout-4" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Why is it simply <span class="math inline">\(A_{ij}\)</span>?
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-4" class="callout-4-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>To see why, take our toy matrix with <span class="math inline">\(i=1\)</span>, <span class="math inline">\(j=2\)</span>. Right-multiplying by <span class="math inline">\(\varepsilon_j\)</span> extracts column <span class="math inline">\(j\)</span>:</p>
+<p><span class="math display">\[A\varepsilon_2 = \begin{bmatrix}1 &amp; 2 &amp; 0\\0 &amp; 1 &amp; 2\end{bmatrix}\begin{bmatrix}0\\1\\0\end{bmatrix} = \begin{bmatrix}2\\1\end{bmatrix}\]</span></p>
+<p>Left-multiplying by <span class="math inline">\(\varepsilon_i^T\)</span> extracts row <span class="math inline">\(i\)</span> from the result:</p>
+<p><span class="math display">\[\varepsilon_1^T\begin{bmatrix}2\\1\end{bmatrix} = \begin{bmatrix}1 &amp; 0\end{bmatrix}\begin{bmatrix}2\\1\end{bmatrix} = 2\]</span></p>
+<p>So <span class="math inline">\(\varepsilon_i^T M \varepsilon_j\)</span> picks out entry <span class="math inline">\((i,j)\)</span> of whatever matrix <span class="math inline">\(M\)</span> sits in the middle.</p>
+</div>
+</div>
+</div>
+<p>The LS-SVM route arrives at the same place through a different mechanism: competing forces instead of constrained maximization.</p>
+<p><span class="math display">\[A[\beta] = [\alpha]\tilde{\Lambda}\]</span> <span class="math display">\[A^T[\alpha] = [\beta]\tilde{\Lambda}\]</span></p>
+<p>The compatibility condition <span class="math inline">\(ACA = A\)</span> is exactly what makes the unsymmetric kernel matrix collapse to <span class="math inline">\(A\)</span> itself. Flipping all signs (<span class="math inline">\(-J\)</span> instead of <span class="math inline">\(J\)</span>) yields the same result: the KKT conditions find stationary points, and <span class="math inline">\(\nabla\mathscr{L} = 0\)</span> has the same solutions as <span class="math inline">\(-\nabla\mathscr{L} = 0\)</span>. The sign convention is arbitrary; the balance is not.</p>
+</section>
+<section id="finding-the-compatibility-matrix" class="level2">
+<h2 class="anchored" data-anchor-id="finding-the-compatibility-matrix">Finding the Compatibility Matrix</h2>
+<p>The condition <span class="math inline">\(ACA = A\)</span> is not arbitrary. It’s the defining property of a <strong>generalized inverse</strong>: a matrix <span class="math inline">\(C\)</span> such that <span class="math inline">\(A\)</span> “absorbs” <span class="math inline">\(C\)</span> in the middle, returning to itself. For a full-rank matrix, the pseudoinverse <span class="math inline">\(A^\dagger\)</span> provides exactly such a <span class="math inline">\(C\)</span>.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-5-contents" aria-controls="callout-5" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+What is a pseudoinverse?
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-5" class="callout-5-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>A matrix that isn’t square has no standard inverse. Consider a simple example: <span class="math inline">\(A = \begin{bmatrix}1 &amp; 1\end{bmatrix}\)</span>, mapping <span class="math inline">\(\mathbb{R}^2 \to \mathbb{R}^1\)</span>. Given <span class="math inline">\(b = 1\)</span>, the equation <span class="math inline">\(Ax = b\)</span> becomes <span class="math inline">\(x_1 + x_2 = 1\)</span>. That’s a line in <span class="math inline">\(\mathbb{R}^2\)</span>: infinitely many solutions. The points <span class="math inline">\((1, 0)\)</span>, <span class="math inline">\((0, 1)\)</span>, <span class="math inline">\((0.3, 0.7)\)</span> all work. Information was lost in the projection from 2D to 1D, and there’s no unique way to recover it.</p>
+<p>The pseudoinverse resolves this by picking, among all solutions, the one with smallest norm: the point on the line closest to the origin. Here that’s <span class="math inline">\((0.5, 0.5)\)</span>, with <span class="math inline">\(\|(0.5, 0.5)\| = 1/\sqrt{2}\)</span>, shorter than any other solution.</p>
+<div style="text-align: center;">
+<p><img src="pseudoinverse-min-norm.png" class="img-fluid" style="width:50.0%"></p>
+</div>
+<p>The algebraic derivation for the <span class="math inline">\(N &lt; M\)</span> case (more columns than rows) follows from one observation. <span class="math inline">\(A\)</span> is not square, but <span class="math inline">\(AA^T\)</span> is: it’s <span class="math inline">\(N \times N\)</span>, and invertible when <span class="math inline">\(A\)</span> has full row rank. So:</p>
+<p><span class="math display">\[AA^T(AA^T)^{-1} = I_N\]</span></p>
+<p>Define <span class="math inline">\(A^\dagger = A^T(AA^T)^{-1}\)</span>. Then:</p>
+<p><span class="math display">\[AA^\dagger = A \cdot A^T(AA^T)^{-1} = (AA^T)(AA^T)^{-1} = I_N \checkmark\]</span></p>
+<p>This is a right inverse: <span class="math inline">\(AA^\dagger = I_N\)</span>, but <span class="math inline">\(A^\dagger A \neq I_M\)</span> in general. It maps each <span class="math inline">\(b\)</span> back to the minimum-norm solution. For our example: <span class="math inline">\(A^\dagger = \begin{bmatrix}1\\1\end{bmatrix} \cdot (2)^{-1} = \begin{bmatrix}0.5\\0.5\end{bmatrix}\)</span>, and indeed <span class="math inline">\(A^\dagger \cdot 1 = (0.5, 0.5)^T\)</span>.</p>
+<p>The three cases for a full-rank matrix:</p>
+<ul>
+<li><span class="math inline">\(N &gt; M\)</span>: <span class="math inline">\(A^\dagger = (A^TA)^{-1}A^T\)</span> (left inverse, <span class="math inline">\(A^\dagger A = I_M\)</span>)</li>
+<li><span class="math inline">\(N &lt; M\)</span>: <span class="math inline">\(A^\dagger = A^T(AA^T)^{-1}\)</span> (right inverse, <span class="math inline">\(AA^\dagger = I_N\)</span>)</li>
+<li><span class="math inline">\(N = M\)</span>: <span class="math inline">\(A^\dagger = A^{-1}\)</span></li>
+</ul>
+</div>
+</div>
+</div>
+</section>
+<section id="what-did-we-just-build" class="level2">
+<h2 class="anchored" data-anchor-id="what-did-we-just-build">What Did We Just Build?</h2>
+<p>We started with a rectangular matrix <span class="math inline">\(A\)</span> and a question: can the LS-SVM competing-forces framework from Part 2 handle SVD, where two spaces of different dimension are in play?</p>
+<p>The path: split <span class="math inline">\(A\)</span> into its rows and columns (two datasets), introduce a compatibility matrix <span class="math inline">\(C\)</span> to bring them into the same space, and let the same Lagrangian machinery do the rest. The compatibility condition <span class="math inline">\(ACA = A\)</span> (satisfied by the pseudoinverse) is what makes the cross-kernel matrix collapse to <span class="math inline">\(A\)</span> itself, recovering Lanczos’ shifted eigenvalue problem.</p>
+<p>Two different routes, same destination. The classical formulation from Part 1 maximizes <span class="math inline">\(u^TAv\)</span> under norm constraints. The LS-SVM formulation balances coupling against projected variance. Both land on the same block eigenvalue structure, the same singular values, the same four subspaces.</p>
+</section>
+<section id="why-bother-three-payoffs" class="level2">
+<h2 class="anchored" data-anchor-id="why-bother-three-payoffs">Why Bother? Three Payoffs</h2>
+<p>Reformulating SVD through the LS-SVM lens took real work: two datasets, a compatibility matrix, KKT conditions. The classical variational formulation from Part 1 got us to the same eigenvalue problem more directly. So what did we gain?</p>
+<p><strong>1. The dual representation.</strong> The KKT conditions give us two ways to compute the output. The primal: <span class="math inline">\(e_i = w^T\varphi(x_i)\)</span>. The dual:</p>
+<p><span class="math display">\[e_i = \sum_j \beta_j \, \psi(z_j)^T\varphi(x_i)\]</span></p>
+<p>A weighted sum over data points, weighted by cross-kernel entries. The classical formulation from Part 1 has no analog of this. As we’ll see at the end of this post, this dual form has a familiar shape.</p>
+<p><strong>2. Nonlinear extensions.</strong> Replace the linear inner product <span class="math inline">\(\varphi(x_i)^T\psi(z_j)\)</span> with a nonlinear kernel <span class="math inline">\(K(\varphi(x_i), \psi(z_j))\)</span>, and you get a nonlinear SVD. The classical formulation offers no route to this.</p>
+<p><strong>3. Perfect balance at the solution.</strong> At the KKT solutions, the objective <span class="math inline">\(J\)</span> evaluates to exactly zero (Corollary 1 of the paper). The coupling term and the variance terms cancel perfectly. This is the same phenomenon we observed geometrically in Part 2 for PCA: at the quantized <span class="math inline">\(\gamma\)</span> values, the landscape passes through zero.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-6-contents" aria-controls="callout-6" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Proof that <span class="math inline">\(J = 0\)</span> at the KKT solution
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-6" class="callout-6-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Starting from the objective:</p>
+<p><span class="math display">\[J = -w^Tv + \frac{\gamma}{2}\sum_i e_i^2 + \frac{\gamma}{2}\sum_j r_j^2\]</span></p>
+<p><strong>Substitute the KKT conditions.</strong> Replace <span class="math inline">\(w = \sum_j \beta_j\psi(z_j)\)</span> and <span class="math inline">\(v = \sum_i \alpha_i\varphi(x_i)\)</span>:</p>
+<p><span class="math display">\[w^Tv = \sum_i\sum_j \alpha_i\beta_j \underbrace{\varphi(x_i)^T\psi(z_j)}_{= A_{ij}} = \alpha^T A \beta\]</span></p>
+<p>The shifted eigenvalue problem gives <span class="math inline">\(A\beta = \lambda\alpha\)</span>, so:</p>
+<p><span class="math display">\[\alpha^T A\beta = \lambda\,\alpha^T\alpha\]</span></p>
+<p><strong>Replace <span class="math inline">\(e_i\)</span> and <span class="math inline">\(r_j\)</span>.</strong> From <span class="math inline">\(\alpha_i = \gamma e_i\)</span>, we get <span class="math inline">\(e_i = \alpha_i/\gamma = \lambda\alpha_i\)</span>:</p>
+<p><span class="math display">\[\frac{\gamma}{2}\sum_i e_i^2 = \frac{1}{2\gamma}\alpha^T\alpha = \frac{\lambda}{2}\alpha^T\alpha\]</span></p>
+<p>Similarly:</p>
+<p><span class="math display">\[\frac{\gamma}{2}\sum_j r_j^2 = \frac{\lambda}{2}\beta^T\beta\]</span></p>
+<p><strong>Combine.</strong> Substituting:</p>
+<p><span class="math display">\[J = -\lambda\,\alpha^T\alpha + \frac{\lambda}{2}\alpha^T\alpha + \frac{\lambda}{2}\beta^T\beta\]</span></p>
+<p>Since <span class="math inline">\(\alpha^T\alpha = \beta^T\beta\)</span> (proved by multiplying <span class="math inline">\(A\beta = \lambda\alpha\)</span> on the left by <span class="math inline">\(\alpha^T\)</span> and <span class="math inline">\(A^T\alpha = \lambda\beta\)</span> on the left by <span class="math inline">\(\beta^T\)</span>, both giving <span class="math inline">\(\alpha^TA\beta\)</span>, then dividing by <span class="math inline">\(\lambda \neq 0\)</span>):</p>
+<p><span class="math display">\[J = -\lambda\,\beta^T\beta + \frac{\lambda}{2}\beta^T\beta + \frac{\lambda}{2}\beta^T\beta = 0 \quad\square\]</span></p>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="math inline">\(J = 0\)</span> does not characterize the SVD
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The implication runs one way: KKT stationarity implies <span class="math inline">\(J = 0\)</span>, not the reverse. The KKT system is a coupled set of equations that locks <span class="math inline">\(w\)</span>, <span class="math inline">\(v\)</span>, <span class="math inline">\(\alpha\)</span>, <span class="math inline">\(\beta\)</span>, and <span class="math inline">\(\gamma\)</span> together through the constraints. That structure reduces the degrees of freedom to a discrete set of solutions indexed by the singular values.</p>
+<p>The condition <span class="math inline">\(J = 0\)</span> alone is just one scalar equation in many unknowns. It says the coupling term <span class="math inline">\(w^Tv\)</span> equals the total projected variance <span class="math inline">\(\frac{\gamma}{2}(\|e\|^2 + \|r\|^2)\)</span>, nothing more. Infinitely many <span class="math inline">\((w, v, \gamma)\)</span> triples satisfy this balance without being anywhere near the SVD.</p>
+<p>A natural temptation: minimize <span class="math inline">\(J^2\)</span> by gradient descent over <span class="math inline">\(w\)</span>, <span class="math inline">\(v\)</span>, <span class="math inline">\(\gamma\)</span>, hoping to land on an SVD solution. The intuition is reasonable: in Part 2, the stationary points sat at semi-definite cases (positive or negative), and squaring would make all of them, including any saddle points, point upward into something gradient descent can chase. But <span class="math inline">\(J^2 = 0\)</span> is one scalar equation in many unknowns. The zero-level set is vast, with no eigenvalue structure, no orthogonality, no singular vectors. The constraints and coupling that the KKT system encodes are absent.</p>
+<p>The “Primal Attention” paper does use <span class="math inline">\(J^2\)</span>, but not alone: it appears as a regularization term added to a task loss, within a different objective and structure.</p>
+</div>
+</div>
+</section>
+<section id="the-seed-of-attention" class="level2">
+<h2 class="anchored" data-anchor-id="the-seed-of-attention">The Seed of Attention</h2>
+<p>Look at the dual representation from Remark 2 one more time:</p>
+<p><span class="math display">\[e_i = \sum_j \beta_j \, \psi(z_j)^T\varphi(x_i)\]</span></p>
+<p>Two different feature maps (<span class="math inline">\(\varphi\)</span> and <span class="math inline">\(\psi\)</span>), applied to two different data sources (<span class="math inline">\(x_i\)</span> and <span class="math inline">\(z_j\)</span>). Their inner product forms an unsymmetric cross-kernel. The output is a linear combination of Lagrange multipliers, weighted by that kernel.</p>
+<p>Now recall self-attention:</p>
+<p><span class="math display">\[\text{out}_i = \sum_j V_j \cdot Q_i^T K_j\]</span></p>
+<p>The structure is the same. Queries and keys are two different projections of the input — two different feature maps. Their inner product forms an unsymmetric score matrix. The output is a linear combination of values, weighted by those scores.</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>LS-SVM SVD (2016)</th>
+<th>Self-attention (2017)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><span class="math inline">\(\varphi(x_i)\)</span></td>
+<td><span class="math inline">\(Q_i\)</span> (queries)</td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(\psi(z_j)\)</span></td>
+<td><span class="math inline">\(K_j\)</span> (keys)</td>
+</tr>
+<tr class="odd">
+<td><span class="math inline">\(\beta_j\)</span></td>
+<td><span class="math inline">\(V_j\)</span> (values)</td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(\psi(z_j)^T\varphi(x_i)\)</span></td>
+<td><span class="math inline">\(Q_i^TK_j\)</span> (attention score)</td>
+</tr>
+</tbody>
+</table>
+<p>This parallel is not a coincidence. A later paper, <a href="https://arxiv.org/abs/2305.19798"><em>Primal Attention</em></a> (2023), makes the connection explicit. The LS-SVM formulation produces two sets of outputs (<span class="math inline">\(e_i\)</span> and <span class="math inline">\(r_j\)</span>, one per dataset); the next post will show how these are reconciled into a single attention output.</p>
+<p>The SVD Revisited paper appeared in 2016, one year before <a href="https://arxiv.org/abs/1706.03762"><em>Attention Is All You Need</em></a>. The mathematical structure that underpins self-attention was already there, in a short linear algebra paper about compatible feature maps.</p>
+</section>
+<section id="conclusion" class="level2">
+<h2 class="anchored" data-anchor-id="conclusion">Conclusion</h2>
+<p>Suykens reformulated PCA, canonical correlation analysis, partial least squares, density estimation, and clustering through the LS-SVM lens as early as 2002, in <a href="https://www.worldscientific.com/worldscibooks/10.1142/5089#t=aboutBook"><em>Least Squares Support Vector Machines</em></a>. SVD arrived much later, in this 2016 paper, requiring the additional machinery of compatible feature maps and the compatibility condition to handle rectangular matrices.</p>
+<p>One year later, Vaswani et al.&nbsp;published <em>Attention Is All You Need</em>. The structural parallel between the LS-SVM dual and self-attention went unnoticed for several years, until Suykens and collaborators (Yingyi Chen, Qinghua Tao, Francesco Tonin) recognized it. The result: <a href="https://arxiv.org/abs/2305.19798"><em>Primal Attention</em></a> (2023), which recasts self-attention as the dual of an LS-SVM kernel SVD problem and rewrites it in primal form, bypassing the costly <span class="math inline">\(N \times N\)</span> attention map while achieving competitive performance.</p>
+<p>The next post covers that paper. We now have all the pieces: the variational formulation, the competing forces, the primal-dual duality, and the cross-kernel structure that quietly foreshadowed attention.</p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp("https:\/\/fr\.anckalbi\.net");
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
