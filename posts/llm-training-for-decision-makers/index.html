@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.6.42">
+<meta name="generator" content="quarto-1.9.37">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -12,6 +12,9 @@
 
 <title>What Decision-Makers Need to Know About AI Training – FR.ANCKALBI.NET</title>
 <style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
 div.columns{display: flex; gap: min(4vw, 1.5em);}
@@ -33,15 +36,16 @@ ul.task-list li input[type="checkbox"] {
 <script src="../../site_libs/quarto-search/fuse.min.js"></script>
 <script src="../../site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="../../">
-<script src="../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
 <script src="../../site_libs/quarto-html/popper.min.js"></script>
 <script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-2f5df379a58b258e96c21c0638c20c03.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-7f8f88aac4f3542376d5c11b86a4c14d.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../../site_libs/bootstrap/bootstrap-d8da95f774daf845fa96da8c9b52f128.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-e7ebdf27cf37a6f9b3430032183dff20.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -74,7 +78,7 @@ ul.task-list li input[type="checkbox"] {
 <link rel="stylesheet" href="../../styles.css">
 </head>
 
-<body class="nav-fixed">
+<body class="nav-fixed quarto-light">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top quarto-banner">
@@ -164,11 +168,11 @@ ul.task-list li input[type="checkbox"] {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#stage-1-self-supervised-pre-training---building-the-foundation" id="toc-stage-1-self-supervised-pre-training---building-the-foundation" class="nav-link active" data-scroll-target="#stage-1-self-supervised-pre-training---building-the-foundation">Stage 1: Self-Supervised Pre-Training - Building the Foundation</a></li>
-  <li><a href="#stage-2-supervised-fine-tuning---learning-to-converse" id="toc-stage-2-supervised-fine-tuning---learning-to-converse" class="nav-link" data-scroll-target="#stage-2-supervised-fine-tuning---learning-to-converse">Stage 2: Supervised Fine-Tuning - Learning to Converse</a></li>
-  <li><a href="#stage-3-preference-fine-tuning---learning-what-humans-actually-want" id="toc-stage-3-preference-fine-tuning---learning-what-humans-actually-want" class="nav-link" data-scroll-target="#stage-3-preference-fine-tuning---learning-what-humans-actually-want">Stage 3: Preference Fine-Tuning - Learning What Humans Actually Want</a></li>
-  <li><a href="#stage-4-reasoning-fine-tuning---teaching-models-to-think-step-by-step" id="toc-stage-4-reasoning-fine-tuning---teaching-models-to-think-step-by-step" class="nav-link" data-scroll-target="#stage-4-reasoning-fine-tuning---teaching-models-to-think-step-by-step">Stage 4: Reasoning Fine-Tuning - Teaching Models to Think Step-by-Step</a></li>
-  <li><a href="#beyond-reinforcement-learning---the-next-wave" id="toc-beyond-reinforcement-learning---the-next-wave" class="nav-link" data-scroll-target="#beyond-reinforcement-learning---the-next-wave">Beyond Reinforcement Learning - The Next Wave</a></li>
+  <li><a href="#stage-1-self-supervised-pre-training-the-foundation" id="toc-stage-1-self-supervised-pre-training-the-foundation" class="nav-link active" data-scroll-target="#stage-1-self-supervised-pre-training-the-foundation">Stage 1: Self-supervised pre-training (the foundation)</a></li>
+  <li><a href="#stage-2-supervised-fine-tuning-learning-to-converse" id="toc-stage-2-supervised-fine-tuning-learning-to-converse" class="nav-link" data-scroll-target="#stage-2-supervised-fine-tuning-learning-to-converse">Stage 2: Supervised fine-tuning (learning to converse)</a></li>
+  <li><a href="#stage-3-preference-fine-tuning-learning-what-people-want" id="toc-stage-3-preference-fine-tuning-learning-what-people-want" class="nav-link" data-scroll-target="#stage-3-preference-fine-tuning-learning-what-people-want">Stage 3: Preference fine-tuning (learning what people want)</a></li>
+  <li><a href="#stage-4-reasoning-fine-tuning-working-step-by-step" id="toc-stage-4-reasoning-fine-tuning-working-step-by-step" class="nav-link" data-scroll-target="#stage-4-reasoning-fine-tuning-working-step-by-step">Stage 4: Reasoning fine-tuning (working step by step)</a></li>
+  <li><a href="#beyond-reinforcement-learning" id="toc-beyond-reinforcement-learning" class="nav-link" data-scroll-target="#beyond-reinforcement-learning">Beyond reinforcement learning</a></li>
   <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion">Conclusion</a></li>
   </ul>
 </nav>
@@ -180,292 +184,298 @@ ul.task-list li input[type="checkbox"] {
 
 
 
-<p>You’ve probably heard that AI models cost millions to train, that they “learn” from data, and that the latest ones can “reason” through complex problems. Between breathless media coverage, marketing pitches from tech companies, and technical discussions filled with jargon and overloaded terminology, it’s hard to know what’s actually happening when we “train” an AI model.</p>
-<p>For decision-makers, this matters. When a startup claims their model was trained for “only $5 million” while tech giants spend billions, or when vendors talk about “advanced reasoning capabilities,” what are they really describing? How do you move from a simple text-completion tool to something that can hold conversations and solve complex problems?</p>
-<p>This guide <strong>synthesizes the key concepts from technical sources to give you a clear, honest picture</strong> of the four stages that transform raw text into today’s AI systems.</p>
-<section id="stage-1-self-supervised-pre-training---building-the-foundation" class="level2">
-<h2 class="anchored" data-anchor-id="stage-1-self-supervised-pre-training---building-the-foundation">Stage 1: Self-Supervised Pre-Training - Building the Foundation</h2>
-<p>At its core, a large language model starts as something surprisingly simple: a system that learns to predict what word comes next in a sentence. During pre-training, the model is fed massive amounts of text—books, websites, articles—with parts intentionally hidden. Its job is to fill in the blanks.</p>
-<p>Think of it like a massive pattern-recognition exercise. Given <code>"The cat sat on the ___,"</code> the model learns that <code>"mat"</code> appears more often than <code>"elephant"</code> in this context by seeing millions of similar examples.</p>
-<p>This isn’t like traditional machine learning where humans label data as “correct” or “incorrect.” The model teaches itself by finding patterns in existing text—hence “self-supervised.”</p>
-<p>This stage requires enormous computational resources—hence those million-dollar training costs—because the model processes vast amounts of text to build its understanding of language patterns, facts, and relationships.</p>
-<p><strong>What you get:</strong> A system that understands language structure and can complete text, but can’t hold conversations or follow instructions. It’s the foundation, not the finished product.</p>
+<p>You’ve probably heard that AI models cost millions to train, that they “learn” from data, and that the latest ones can “reason” through complex problems. Between breathless media coverage, marketing pitches from tech companies and technical discussions full of jargon, it’s hard to know what actually happens when we “train” an AI model.</p>
+<p>When a startup claims its model was trained for “only $5 million” while tech giants spend billions, or a vendor promises “advanced reasoning capabilities”, what are they describing? And how does a simple text-completion tool become something that holds conversations and solves complex problems?</p>
+<p>This guide draws on technical sources to explain the four stages that turn raw text into today’s AI systems.</p>
+<section id="stage-1-self-supervised-pre-training-the-foundation" class="level2">
+<h2 class="anchored" data-anchor-id="stage-1-self-supervised-pre-training-the-foundation">Stage 1: Self-supervised pre-training (the foundation)</h2>
+<p>A large language model starts as something surprisingly simple: a system that learns to predict the next word in a sentence. During pre-training, the model reads massive amounts of text, such as books, websites and articles. At each point in the text, it guesses the next word and checks its guess against the word that actually follows.</p>
+<p>Given <code>"The cat sat on the ___"</code>, the model sees millions of similar examples and learns that <code>"mat"</code> appears more often than <code>"elephant"</code> in this context.</p>
+<p>In traditional machine learning, humans label data as “correct” or “incorrect”. Pre-training needs no such labels. The text itself supplies the answers. That is what “self-supervised” means.</p>
+<p>This stage needs enormous computing power, because the model processes vast amounts of text to learn language patterns, facts and relationships. That is where the million-dollar training costs come from.</p>
+<p><strong>What you get:</strong> A system that understands language structure and can complete text, but cannot hold a conversation or follow instructions. It is the foundation for the stages that follow.</p>
 </section>
-<section id="stage-2-supervised-fine-tuning---learning-to-converse" class="level2">
-<h2 class="anchored" data-anchor-id="stage-2-supervised-fine-tuning---learning-to-converse">Stage 2: Supervised Fine-Tuning - Learning to Converse</h2>
-<p>Having a system that can complete text isn’t enough to create a useful assistant. If you asked a pre-trained model <code>"What are the key factors for successful program implementation?"</code> it might continue with <code>"This question often comes up in development circles. Many organizations struggle with..."</code> rather than actually providing actionable insights.</p>
-<p>Supervised fine-tuning teaches the model to behave like a helpful assistant. Instead of feeding it random internet text, trainers now show it thousands of carefully crafted conversations between users and AI assistants.</p>
-<p>The model learns the structure of helpful dialogue: how to recognize a question, provide a direct answer, maintain a professional tone, and structure information clearly. This isn’t about adding new knowledge—the model already absorbed facts during pre-training. It’s about learning how to package that knowledge into useful responses.</p>
-<p><strong>The limitation:</strong> Creating these training conversations by hand is expensive and time-consuming. You can’t possibly craft examples for every scenario your users might encounter.</p>
-<p><strong>What you get:</strong> A system that can hold conversations and follow instructions, but it may still produce responses that seem helpful while being factually wrong or potentially harmful.</p>
+<section id="stage-2-supervised-fine-tuning-learning-to-converse" class="level2">
+<h2 class="anchored" data-anchor-id="stage-2-supervised-fine-tuning-learning-to-converse">Stage 2: Supervised fine-tuning (learning to converse)</h2>
+<p>A system that completes text is not yet a useful assistant. Ask a pre-trained model <code>"What are the key factors for successful program implementation?"</code> and it might continue with <code>"This question often comes up in development circles. Many organizations struggle with..."</code> instead of answering.</p>
+<p>Supervised fine-tuning teaches the model to behave like a helpful assistant. Instead of random internet text, trainers show it thousands of hand-written conversations between users and AI assistants.</p>
+<p>The model learns the structure of helpful dialogue: how to recognize a question, give a direct answer, keep a professional tone and organize information clearly. It learns no new facts at this stage. It absorbed those during pre-training, and now it learns to package them into useful responses.</p>
+<p>Writing these conversations by hand is slow and expensive. Nobody can write an example for every situation your users will meet.</p>
+<p><strong>What you get:</strong> A system that holds conversations and follows instructions, but may still give responses that sound helpful and are factually wrong or harmful.</p>
 </section>
-<section id="stage-3-preference-fine-tuning---learning-what-humans-actually-want" class="level2">
-<h2 class="anchored" data-anchor-id="stage-3-preference-fine-tuning---learning-what-humans-actually-want">Stage 3: Preference Fine-Tuning - Learning What Humans Actually Want</h2>
-<p>Even after learning to converse, models face two critical challenges. First, how do you train them on subjective tasks where there’s no single “right” answer? Second, how do you ensure they refuse harmful requests?</p>
-<p>You can’t easily write training examples for <code>"Write a compelling project proposal"</code> or <code>"Explain this policy in a way that stakeholders will understand."</code> What makes one response better than another is often a matter of judgment, not facts.</p>
-<p>Preference fine-tuning solves this by showing the model multiple responses to the same question and learning from human feedback about which ones are preferred. If users consistently prefer concise, well-structured responses over verbose ones, the model learns to adjust its style accordingly.</p>
-<p>This stage also handles safety and alignment. By showing the model examples of harmful requests and training it to recognize and refuse them, organizations can ensure their AI systems align with their values and policies.</p>
-<p><strong>What you get:</strong> A system that produces responses more aligned with human preferences and can refuse inappropriate requests, but it may still struggle with complex reasoning tasks.</p>
+<section id="stage-3-preference-fine-tuning-learning-what-people-want" class="level2">
+<h2 class="anchored" data-anchor-id="stage-3-preference-fine-tuning-learning-what-people-want">Stage 3: Preference fine-tuning (learning what people want)</h2>
+<p>A model that can converse still has two problems. How do you train it on subjective tasks where there is no single right answer? And how do you make it refuse harmful requests?</p>
+<p>You can’t easily write training examples for <code>"Write a compelling project proposal"</code> or <code>"Explain this policy in a way that stakeholders will understand."</code> What makes one response better than another is often a matter of judgment, not fact.</p>
+<p>Preference fine-tuning shows the model several responses to the same question, together with human judgments of which one is better. If people consistently prefer concise, well-structured responses to verbose ones, the model adjusts its style to match.</p>
+<p>This stage also covers safety. Trainers show the model examples of harmful requests and train it to recognize and refuse them. Organizations use this to align their AI systems with their values and policies.</p>
+<p><strong>What you get:</strong> A system whose responses match human preferences more closely and that can refuse inappropriate requests, but that may still struggle with complex reasoning.</p>
 </section>
-<section id="stage-4-reasoning-fine-tuning---teaching-models-to-think-step-by-step" class="level2">
-<h2 class="anchored" data-anchor-id="stage-4-reasoning-fine-tuning---teaching-models-to-think-step-by-step">Stage 4: Reasoning Fine-Tuning - Teaching Models to Think Step-by-Step</h2>
-<p>The previous stages create competent conversational assistants, but they often fail at complex problems requiring multi-step analysis. Ask a model to evaluate a budget proposal or design a project timeline, and it might jump to conclusions without showing its work.</p>
-<p>What the AI field calls “reasoning fine-tuning” teaches models to work through problems systematically—to break down complex tasks into steps, consider multiple approaches, and show their process. The term “reasoning” is borrowed from human cognition, though researchers who study how thinking actually works might raise an eyebrow at applying it to statistical text prediction. Like “artificial intelligence” itself, it’s become the accepted terminology, so we’ll go with the flow while keeping our skeptical hats nearby.</p>
-<p>This isn’t just about being verbose; it’s about mobilizing more computational power by working through problems step-by-step, much like humans do when tackling complex challenges.</p>
-<p>The breakthrough came from applying techniques originally developed for game-playing AI. Just as AlphaGo learned by playing millions of games against itself, these models improve by generating multiple solutions to problems and learning from which approaches work best.</p>
-<p>DeepSeek’s innovation was making this process much more efficient. Instead of requiring expensive human evaluation of every response, they focused on problems with verifiable answers—like math or coding—where success can be measured automatically. This dramatically reduced training costs while achieving comparable performance.</p>
-<p><strong>What you get:</strong> A system that can tackle complex, multi-step problems and show its analytical process, making it more reliable and trustworthy for critical decisions.</p>
+<section id="stage-4-reasoning-fine-tuning-working-step-by-step" class="level2">
+<h2 class="anchored" data-anchor-id="stage-4-reasoning-fine-tuning-working-step-by-step">Stage 4: Reasoning fine-tuning (working step by step)</h2>
+<p>The first three stages produce competent conversational assistants that often fail at problems needing several steps of analysis. Ask one to evaluate a budget proposal or design a project timeline, and it may jump to conclusions without showing its work.</p>
+<p>What the AI field calls “reasoning fine-tuning” teaches models to work through a problem in steps: break the task into parts, consider several approaches and show the process. The word “reasoning” is borrowed from human cognition, and researchers who study how thinking actually works might raise an eyebrow at applying it to statistical text prediction. Like “artificial intelligence”, it has become the accepted term. We’ll go with it and keep our skeptical hats nearby.</p>
+<p>Writing out the steps lets the model spend more computation on a problem, much as people work step by step through a hard one.</p>
+<p>The training method is reinforcement learning, best known from game-playing AI. AlphaGo Zero learned Go by playing millions of games against itself. Reasoning models improve in a similar way. They generate several solutions to a problem and learn from the approaches that work best.</p>
+<p>DeepSeek made this process much cheaper. Instead of relying on human judgments of response quality, they trained on problems with verifiable answers, such as math or coding, where a program can check the result automatically. The resulting model, DeepSeek-R1, performed comparably to OpenAI’s o1 on reasoning benchmarks.</p>
+<p><strong>What you get:</strong> A system that handles complex, multi-step problems better and shows the steps it took. The steps help you check its answers, but they do not make the answers correct.</p>
 </section>
-<section id="beyond-reinforcement-learning---the-next-wave" class="level2">
-<h2 class="anchored" data-anchor-id="beyond-reinforcement-learning---the-next-wave">Beyond Reinforcement Learning - The Next Wave</h2>
-<p>The field continues evolving rapidly. Recent research suggests that the reinforcement learning approach pioneered by DeepSeek might not be the final word on training reasoning capabilities.</p>
-<p>A July 2025 paper introduced <a href="https://arxiv.org/abs/2507.19457">GEPA (reflective prompt evolution)</a>, which challenges the established approach. Instead of learning from numerical rewards like a game score, GEPA uses natural language feedback—essentially teaching models to improve by reflecting on their mistakes in words rather than numbers.</p>
-<p>The results are striking: GEPA outperformed DeepSeek’s methods by 10-20% while requiring up to 35 times fewer computational resources. The insight is elegantly simple—since these are language models, why not teach them using language itself?</p>
-<p>This represents a shift from viewing AI training as a game-playing problem to treating it as a more natural learning conversation. Models learn to critique their own work, identify weaknesses, and improve through self-reflection.</p>
-<p><strong>What this means:</strong> Training costs could drop further while capabilities improve, making sophisticated AI more accessible to organizations with smaller budgets.</p>
+<section id="beyond-reinforcement-learning" class="level2">
+<h2 class="anchored" data-anchor-id="beyond-reinforcement-learning">Beyond reinforcement learning</h2>
+<p>The field is still moving fast. Recent research suggests that reinforcement learning is not the only way to make AI systems better at these tasks.</p>
+<p>A July 2025 paper introduced <a href="https://arxiv.org/abs/2507.19457">GEPA (reflective prompt evolution)</a>, which takes a different route. Reinforcement learning changes the model itself, using numerical rewards like a game score. GEPA leaves the model unchanged and improves the instructions it is given, its prompt. It runs the system on tasks, has a language model reflect in plain words on what went wrong, and rewrites the prompt to fix it.</p>
+<p>On the paper’s benchmarks, GEPA outperformed GRPO, the reinforcement learning method DeepSeek used, by 6% on average and by up to 20%. It needed up to 35 times fewer rollouts, the trial runs each method uses to learn. Why not use language to improve language models?</p>
+<p><strong>What this means:</strong> Some improvements that used to need expensive reinforcement learning can come from better prompts instead. That puts them within reach of organizations with smaller budgets.</p>
 </section>
 <section id="conclusion" class="level2">
 <h2 class="anchored" data-anchor-id="conclusion">Conclusion</h2>
-<p>Understanding these four stages—and their ongoing evolution—cuts through much of the confusion surrounding AI capabilities and costs. When a vendor claims their model has “advanced reasoning” or was trained “efficiently,” you now have the framework to ask the right questions: Which stages did they use? How did they handle preference alignment? What innovations did they apply to reduce costs?</p>
-<p>The rapid evolution from DeepSeek’s breakthrough to methods like GEPA shows this field is far from settled. What seemed like a massive competitive advantage just months ago may already be outdated by more efficient approaches.</p>
-<p>For decision-makers, the key insight is that AI capabilities aren’t magic—they’re the result of specific, understandable training processes. Each stage builds particular abilities while leaving others unaddressed. Understanding this progression helps you evaluate what you’re actually getting when you invest in AI systems.</p>
-<p><strong>Acknowledgments:</strong> This explanation draws heavily from the excellent analysis by <a href="https://www.youtube.com/watch?v=YcIbZGTRMjI&amp;t=2142s">David Louapre in his video “Les 4 étapes pour entrainer un LLM”</a> His clear breakdown of the technical concepts and concrete examples made this accessible translation possible.</p>
+<p>When a vendor claims its model has “advanced reasoning” or was trained “efficiently”, you can now ask the right questions. Which stages did they use? How did they handle preference alignment? What did they do to reduce costs?</p>
+<p>DeepSeek’s breakthrough and methods like GEPA arrived within months of each other, and the field is far from settled. A competitive advantage that looked massive a few months ago may already be outdated.</p>
+<p>AI capabilities are not magic. They come from specific training processes that you can understand. Each stage builds particular abilities and leaves others unaddressed. Knowing which stage did what tells you what you are actually getting when you invest in an AI system.</p>
+<p><strong>Acknowledgments:</strong> This explanation draws heavily on <a href="https://www.youtube.com/watch?v=YcIbZGTRMjI&amp;t=2142s">David Louapre’s video “Les 4 étapes pour entrainer un LLM”</a>. His clear breakdown of the technical concepts and his concrete examples made this accessible translation possible.</p>
 
 
 </section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
-window.document.addEventListener("DOMContentLoaded", function (event) {
-  const toggleBodyColorMode = (bsSheetEl) => {
-    const mode = bsSheetEl.getAttribute("data-mode");
-    const bodyEl = window.document.querySelector("body");
-    if (mode === "dark") {
-      bodyEl.classList.add("quarto-dark");
-      bodyEl.classList.remove("quarto-light");
-    } else {
-      bodyEl.classList.add("quarto-light");
-      bodyEl.classList.remove("quarto-dark");
-    }
-  }
-  const toggleBodyColorPrimary = () => {
-    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
-    if (bsSheetEl) {
-      toggleBodyColorMode(bsSheetEl);
-    }
-  }
-  toggleBodyColorPrimary();  
-  const icon = "";
-  const anchorJS = new window.AnchorJS();
-  anchorJS.options = {
-    placement: 'right',
-    icon: icon
-  };
-  anchorJS.add('.anchored');
-  const isCodeAnnotation = (el) => {
-    for (const clz of el.classList) {
-      if (clz.startsWith('code-annotation-')) {                     
-        return true;
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
       }
+      return false;
     }
-    return false;
-  }
-  const onCopySuccess = function(e) {
-    // button target
-    const button = e.trigger;
-    // don't keep focus
-    button.blur();
-    // flash "checked"
-    button.classList.add('code-copy-button-checked');
-    var currentTitle = button.getAttribute("title");
-    button.setAttribute("title", "Copied!");
-    let tooltip;
-    if (window.bootstrap) {
-      button.setAttribute("data-bs-toggle", "tooltip");
-      button.setAttribute("data-bs-placement", "left");
-      button.setAttribute("data-bs-title", "Copied!");
-      tooltip = new bootstrap.Tooltip(button, 
-        { trigger: "manual", 
-          customClass: "code-copy-button-tooltip",
-          offset: [0, -8]});
-      tooltip.show();    
-    }
-    setTimeout(function() {
-      if (tooltip) {
-        tooltip.hide();
-        button.removeAttribute("data-bs-title");
-        button.removeAttribute("data-bs-toggle");
-        button.removeAttribute("data-bs-placement");
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
       }
-      button.setAttribute("title", currentTitle);
-      button.classList.remove('code-copy-button-checked');
-    }, 1000);
-    // clear code selection
-    e.clearSelection();
-  }
-  const getTextToCopy = function(trigger) {
-      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
       for (const childEl of codeEl.children) {
         if (isCodeAnnotation(childEl)) {
           childEl.remove();
         }
       }
       return codeEl.innerText;
-  }
-  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
-    text: getTextToCopy
-  });
-  clipboard.on('success', onCopySuccess);
-  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
-    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
-      text: getTextToCopy,
-      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
     });
-    clipboardModal.on('success', onCopySuccess);
-  }
-    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
-    var mailtoRegex = new RegExp(/^mailto:/);
-      var filterRegex = new RegExp("https:\/\/fr\.anckalbi\.net");
-    var isInternal = (href) => {
-        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
     }
-    // Inspect non-navigation links and adorn them if external
- 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
-    for (var i=0; i<links.length; i++) {
-      const link = links[i];
-      if (!isInternal(link.href)) {
-        // undo the damage that might have been done by quarto-nav.js in the case of
-        // links that we want to consider external
-        if (link.dataset.originalHref !== undefined) {
-          link.href = link.dataset.originalHref;
-        }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/fr\.anckalbi\.net");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
       }
-    }
-  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
-    const config = {
-      allowHTML: true,
-      maxWidth: 500,
-      delay: 100,
-      arrow: false,
-      appendTo: function(el) {
-          return el.parentElement;
-      },
-      interactive: true,
-      interactiveBorder: 10,
-      theme: 'quarto',
-      placement: 'bottom-start',
-    };
-    if (contentFn) {
-      config.content = contentFn;
-    }
-    if (onTriggerFn) {
-      config.onTrigger = onTriggerFn;
-    }
-    if (onUntriggerFn) {
-      config.onUntrigger = onUntriggerFn;
-    }
-    window.tippy(el, config); 
-  }
-  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
-  for (var i=0; i<noterefs.length; i++) {
-    const ref = noterefs[i];
-    tippyHover(ref, function() {
-      // use id or data attribute instead here
-      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
-      try { href = new URL(href).hash; } catch {}
-      const id = href.replace(/^#\/?/, "");
-      const note = window.document.getElementById(id);
-      if (note) {
-        return note.innerHTML;
-      } else {
-        return "";
-      }
-    });
-  }
-  const xrefs = window.document.querySelectorAll('a.quarto-xref');
-  const processXRef = (id, note) => {
-    // Strip column container classes
-    const stripColumnClz = (el) => {
-      el.classList.remove("page-full", "page-columns");
-      if (el.children) {
-        for (const child of el.children) {
-          stripColumnClz(child);
-        }
-      }
-    }
-    stripColumnClz(note)
-    if (id === null || id.startsWith('sec-')) {
-      // Special case sections, only their first couple elements
-      const container = document.createElement("div");
-      if (note.children && note.children.length > 2) {
-        container.appendChild(note.children[0].cloneNode(true));
-        for (let i = 1; i < note.children.length; i++) {
-          const child = note.children[i];
-          if (child.tagName === "P" && child.innerText === "") {
-            continue;
-          } else {
-            container.appendChild(child.cloneNode(true));
-            break;
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
           }
         }
-        if (window.Quarto?.typesetMath) {
-          window.Quarto.typesetMath(container);
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
         }
-        return container.innerHTML
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
       } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
         if (window.Quarto?.typesetMath) {
           window.Quarto.typesetMath(note);
         }
-        return note.innerHTML;
-      }
-    } else {
-      // Remove any anchor links if they are present
-      const anchorLink = note.querySelector('a.anchorjs-link');
-      if (anchorLink) {
-        anchorLink.remove();
-      }
-      if (window.Quarto?.typesetMath) {
-        window.Quarto.typesetMath(note);
-      }
-      if (note.classList.contains("callout")) {
-        return note.outerHTML;
-      } else {
-        return note.innerHTML;
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
       }
     }
-  }
-  for (var i=0; i<xrefs.length; i++) {
-    const xref = xrefs[i];
-    tippyHover(xref, undefined, function(instance) {
-      instance.disable();
-      let url = xref.getAttribute('href');
-      let hash = undefined; 
-      if (url.startsWith('#')) {
-        hash = url;
-      } else {
-        try { hash = new URL(url).hash; } catch {}
-      }
-      if (hash) {
-        const id = hash.replace(/^#\/?/, "");
-        const note = window.document.getElementById(id);
-        if (note !== null) {
-          try {
-            const html = processXRef(id, note.cloneNode(true));
-            instance.setContent(html);
-          } finally {
-            instance.enable();
-            instance.show();
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
           }
         } else {
-          // See if we can fetch this
-          fetch(url.split('#')[0])
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
           .then(res => res.text())
           .then(html => {
             const parser = new DOMParser();
             const htmlDoc = parser.parseFromString(html, "text/html");
-            const note = htmlDoc.getElementById(id);
+            const note = htmlDoc.querySelector('main.content');
             if (note !== null) {
-              const html = processXRef(id, note);
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
               instance.setContent(html);
             } 
           }).finally(() => {
@@ -473,185 +483,161 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
             instance.show();
           });
         }
-      } else {
-        // See if we can fetch a full url (with no hash to target)
-        // This is a special case and we should probably do some content thinning / targeting
-        fetch(url)
-        .then(res => res.text())
-        .then(html => {
-          const parser = new DOMParser();
-          const htmlDoc = parser.parseFromString(html, "text/html");
-          const note = htmlDoc.querySelector('main.content');
-          if (note !== null) {
-            // This should only happen for chapter cross references
-            // (since there is no id in the URL)
-            // remove the first header
-            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
-              note.children[0].remove();
-            }
-            const html = processXRef(null, note);
-            instance.setContent(html);
-          } 
-        }).finally(() => {
-          instance.enable();
-          instance.show();
-        });
-      }
-    }, function(instance) {
-    });
-  }
-      let selectedAnnoteEl;
-      const selectorForAnnotation = ( cell, annotation) => {
-        let cellAttr = 'data-code-cell="' + cell + '"';
-        let lineAttr = 'data-code-annotation="' +  annotation + '"';
-        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
-        return selector;
-      }
-      const selectCodeLines = (annoteEl) => {
-        const doc = window.document;
-        const targetCell = annoteEl.getAttribute("data-target-cell");
-        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
-        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
-        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
-        const lineIds = lines.map((line) => {
-          return targetCell + "-" + line;
-        })
-        let top = null;
-        let height = null;
-        let parent = null;
-        if (lineIds.length > 0) {
-            //compute the position of the single el (top and bottom and make a div)
-            const el = window.document.getElementById(lineIds[0]);
-            top = el.offsetTop;
-            height = el.offsetHeight;
-            parent = el.parentElement.parentElement;
-          if (lineIds.length > 1) {
-            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
-            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
-            height = bottom - top;
-          }
-          if (top !== null && height !== null && parent !== null) {
-            // cook up a div (if necessary) and position it 
-            let div = window.document.getElementById("code-annotation-line-highlight");
-            if (div === null) {
-              div = window.document.createElement("div");
-              div.setAttribute("id", "code-annotation-line-highlight");
-              div.style.position = 'absolute';
-              parent.appendChild(div);
-            }
-            div.style.top = top - 2 + "px";
-            div.style.height = height + 4 + "px";
-            div.style.left = 0;
-            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
-            if (gutterDiv === null) {
-              gutterDiv = window.document.createElement("div");
-              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
-              gutterDiv.style.position = 'absolute';
-              const codeCell = window.document.getElementById(targetCell);
-              const gutter = codeCell.querySelector('.code-annotation-gutter');
-              gutter.appendChild(gutterDiv);
-            }
-            gutterDiv.style.top = top - 2 + "px";
-            gutterDiv.style.height = height + 4 + "px";
-          }
-          selectedAnnoteEl = annoteEl;
-        }
-      };
-      const unselectCodeLines = () => {
-        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
-        elementsIds.forEach((elId) => {
-          const div = window.document.getElementById(elId);
-          if (div) {
-            div.remove();
-          }
-        });
-        selectedAnnoteEl = undefined;
-      };
-        // Handle positioning of the toggle
-    window.addEventListener(
-      "resize",
-      throttle(() => {
-        elRect = undefined;
-        if (selectedAnnoteEl) {
-          selectCodeLines(selectedAnnoteEl);
-        }
-      }, 10)
-    );
-    function throttle(fn, ms) {
-    let throttle = false;
-    let timer;
-      return (...args) => {
-        if(!throttle) { // first call gets through
-            fn.apply(this, args);
-            throttle = true;
-        } else { // all the others get throttled
-            if(timer) clearTimeout(timer); // cancel #2
-            timer = setTimeout(() => {
-              fn.apply(this, args);
-              timer = throttle = false;
-            }, ms);
-        }
-      };
-    }
-      // Attach click handler to the DT
-      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
-      for (const annoteDlNode of annoteDls) {
-        annoteDlNode.addEventListener('click', (event) => {
-          const clickedEl = event.target;
-          if (clickedEl !== selectedAnnoteEl) {
-            unselectCodeLines();
-            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
-            if (activeEl) {
-              activeEl.classList.remove('code-annotation-active');
-            }
-            selectCodeLines(clickedEl);
-            clickedEl.classList.add('code-annotation-active');
-          } else {
-            // Unselect the line
-            unselectCodeLines();
-            clickedEl.classList.remove('code-annotation-active');
-          }
-        });
-      }
-  const findCites = (el) => {
-    const parentEl = el.parentElement;
-    if (parentEl) {
-      const cites = parentEl.dataset.cites;
-      if (cites) {
-        return {
-          el,
-          cites: cites.split(' ')
-        };
-      } else {
-        return findCites(el.parentElement)
-      }
-    } else {
-      return undefined;
-    }
-  };
-  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
-  for (var i=0; i<bibliorefs.length; i++) {
-    const ref = bibliorefs[i];
-    const citeInfo = findCites(ref);
-    if (citeInfo) {
-      tippyHover(citeInfo.el, function() {
-        var popup = window.document.createElement('div');
-        citeInfo.cites.forEach(function(cite) {
-          var citeDiv = window.document.createElement('div');
-          citeDiv.classList.add('hanging-indent');
-          citeDiv.classList.add('csl-entry');
-          var biblioDiv = window.document.getElementById('ref-' + cite);
-          if (biblioDiv) {
-            citeDiv.innerHTML = biblioDiv.innerHTML;
-          }
-          popup.appendChild(citeDiv);
-        });
-        return popup.innerHTML;
+      }, function(instance) {
       });
     }
-  }
-});
-</script>
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
 </div> <!-- /content -->
 
 

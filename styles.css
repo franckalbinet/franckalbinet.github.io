@@ -53,3 +53,8 @@ h3.listing-title a {
     color: #888;
     margin-bottom: -0.5em;
 }
+
+/* MathJax scales maths to the body font's x-height, which renders it larger than the surrounding text */
+mjx-container[jax="CHTML"] {
+    font-size: 100% !important;
+}
